@@ -10,7 +10,7 @@
 #include "fRSH5.h"
 #endif
 
-#include "fRSH5Doc.h"
+//#include "fRSH5Doc.h"
 #include "fRSH5View.h"
 
 #ifdef _DEBUG
@@ -50,96 +50,56 @@ BOOL CfRSH5View::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-// Рисование CfRSH5View
-#define Pprt(a) (*(Particle**)a)
-double Dza, Dzb, Ra, Rb;
-int sortOfZ(const void* a, const void* b)
+void CfRSH5View::Circle(float x, float y, float r, CDC* pDC, CfRSH5Doc* pDoc)
 {
-    /*   Dza = Pprt(a)->Z * (Pprt(a)->Z - CMass[Pprt(a)->agr].Z) / (2 * Zmax);
-       Dzb = Pprt(b)->Z * (Pprt(b)->Z - CMass[Pprt(b)->agr].Z) / (2 * Zmax);
-       if (Pprt(a)->Z + Dza > Pprt(b)->Z + Dzb) return  1; else
-           if (Pprt(a)->Z + Dza < Pprt(b)->Z + Dzb) return -1; else
-               return  0;
-    */
-    if (Pprt(a)->Z > Pprt(b)->Z) return  1; else
-        if (Pprt(a)->Z < Pprt(b)->Z) return -1; else
-            return  0;
+	pDC->Ellipse(round((x - r - pDoc->GetminX) * pDoc->rangeX),
+		round((pDoc->GetScY - (y - r) + pDoc->GetminY) * pDoc->rangeY),
+		round((x + r - pDoc->GetminX) * pDoc->rangeX),
+		round((pDoc->GetScY - (y + r) + pDoc->GetminY) * pDoc->rangeY));
 }
 
-Particle** Mp = NULL;
-Particle* FirstPat;
-Particle* Pi;
-Agregat CMass[150];
-int Zmax = 640;
-int N = 50;
-// Рисование CfRSH7View
-int ShowPicture(CDC* pDc)
+void CfRSH5View::Line(float x1, float y1, float x2, float y2, CDC* pDC, CfRSH5Doc* pDoc)
 {
-    //char st[100];
-    double Dzx, Dzy;
-    //if (WorkShow) return 1;
-    //WorkShow = true;
-    //for (El = FirstEl; El != NULL; El = El->Next)
-    //{
-    //    SetPixel(hdc, El->X , El->Y , RGB(255, 255, 255));
-    //}
-    int i;
-    for (i = 0, Pi = FirstPat; (Mp[i++] = Pi, Pi = Pi->next); );
-    qsort(Mp, N, sizeof(Particle*), &sortOfZ);
-
-    for (i = 0; i < N; i++)
-    {
-        if (Mp[i]->agr != 0)
-        {
-            Dzx = Mp[i]->Z * (Mp[i]->X - CMass[Mp[i]->agr].X) / (2 * Zmax);
-            Dzy = Mp[i]->Z * (Mp[i]->Y - CMass[Mp[i]->agr].Y) / (2 * Zmax);
-        }
-        else Dzx = Dzy = 0;
-
-
-        if (Mp[i]->q == 0)
-        {
-            HPEN hNPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 255));
-            HPEN hOPen = (HPEN)pDc->SelectObject(hNPen);
-            pDc->Arc((int)(Mp[i]->X + Dzx), (int)(Mp[i]->Y + Dzy), (int)(Mp[i]->X + Dzx + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)(Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2));
-            DeleteObject(hNPen);
-            DeleteObject(hOPen);
-        }
-        else
-            if (Mp[i]->q > 0)
-            {
-                HPEN hNPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-                HPEN hOPen = (HPEN)pDc->SelectObject(hNPen);
-                pDc->Arc((int)(Mp[i]->X + Dzx), (int)(Mp[i]->Y + Dzy), (int)(Mp[i]->X + Dzx + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)(Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2));
-                DeleteObject(hNPen);
-                DeleteObject(hOPen);
-            }
-            else
-                if (Mp[i]->q < 0)
-                {
-                    HPEN hNPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
-                    HPEN hOPen = (HPEN)pDc->SelectObject(hNPen);
-                    pDc->Arc((int)(Mp[i]->X + Dzx), (int)(Mp[i]->Y + Dzy), (int)(Mp[i]->X + Dzx + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)(Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2), (int)((Mp[i]->X + Dzx) / 2), (int)((Mp[i]->Y + Dzy + 5000000 * Mp[i]->R + Mp[i]->Z * Mp[i]->R / Zmax) / 2));
-                    DeleteObject(hNPen);
-                    DeleteObject(hOPen);
-                }
-
-    }
-
-    //WorkShow = false;
-    return 1;
+	pDC->MoveTo(round((x1 - pDoc->GetminX) * pDoc->rangeX), round((pDoc->GetScY - y1 + pDoc->GetminY) * pDoc->rangeY));
+	pDC->LineTo(round((x2 - pDoc->GetminX) * pDoc->rangeX), round((pDoc->GetScY - y2 + pDoc->GetminY) * pDoc->rangeY));
 }
-int xx = 0;
 
 void CfRSH5View::OnDraw(CDC* pDC)
 {
-	//CfRSH5Doc* pDoc = GetDocument();
-	//ASSERT_VALID(pDoc);
-	//if (!pDoc)
-	//	return;
-    xx += 10;
-    pDC->Ellipse(100+xx,100,125+xx,125);
-    //ShowPicture(pDC);
+	CfRSH5View* pSender=new CfRSH5View();
+	HPEN bluePen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
+	HPEN redPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+	HPEN magPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 255));
+
+	//CBrush  redBrush = CBrush(RGB(255, 0, 0));
+	//CBrush 	blackBrush = CBrush(RGB(0, 0, 0));
+	//CBrush 	blueBrush = CBrush(RGB(0, 0, 255));
+	//CBrush magBrush = CBrush(RGB(255, 0, 255));
+
+
+	CfRSH5Doc* pDoc = GetDocument();
+    ASSERT_VALID(pDoc);
+
+	if (!pDoc)
+		return;
+
+	CRect r;
+	GetClientRect(&r);
+
+	//pDC->FillRect(r, &blackBrush);
+	pDC->SelectObject(&magPen);
+	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
+	{
+		if (pDoc->Pi->q != 0) pDC->SelectObject(pDoc->Pi->q > 0 ? &redPen : &bluePen);
+		else pDC->SelectObject(&magPen);
+		pDC->Ellipse((int)(pDoc->Pi->X - 5000000*pDoc->Pi->R),
+			(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+			(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R ),
+			(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+
+	}
+	//pDoc->UpdateAllViews(pSender,0L,NULL);
+
 	// TODO: добавьте здесь код отрисовки для собственных данных
 }
 
@@ -197,12 +157,12 @@ void CfRSH5View::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-//CfRSH5Doc* CfRSH5View::GetDocument() const // встроена неотлаженная версия
-//{
-//	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CfRSH5Doc)));
-//	return (CfRSH5Doc*)m_pDocument;
-//}
-#endif //_DEBUG
+CfRSH5Doc* CfRSH5View::GetDocument() const // встроена неотлаженная версия
+{
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CfRSH5Doc)));
+	return (CfRSH5Doc*)m_pDocument;
+}
+#endif _DEBUG
 
 
 // Обработчики сообщений CfRSH5View

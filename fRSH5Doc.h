@@ -132,3 +132,6 @@ protected:
     void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 };
+
+
+

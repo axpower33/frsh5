@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "fRSH5.h"
-
+#include "fRSH5Doc.h"
 #include "MainFrm.h"
 
 #ifdef _DEBUG

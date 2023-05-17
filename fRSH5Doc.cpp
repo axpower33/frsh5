@@ -34,6 +34,9 @@ int E = 100;
 float C_SI = 1 / (4 * M_PI * E0 * E);
 float eQulon = 1.6E-19;
 char getcd[128];
+int Xmax = 640;
+int Zmax = 640;
+int Ymax = 480;
 
 CfRSH5Doc::CfRSH5Doc() noexcept
 {
@@ -58,18 +61,11 @@ BOOL CfRSH5Doc::OnNewDocument()
         return FALSE;
     else
     {
-        needCharge = false;
+        needCharge = true;
         N = 50;
-        dt = 2e-6;
+        dt = 3e-5;
         t = 0;
         s = 1;
-        Xmax = Ymax = Zmax = sqrt(N) * (2 * Rmax + Rmid) / 2;
-        GetminX = -Xmax;
-        GetminY = -Ymax;
-        GetmaxX = Xmax;
-        GetmaxY = Ymax;
-        GetScX = (GetmaxX - GetminX);
-        GetScY = (GetmaxY - GetminY);
         MakeArray(N);
         InitParticle();
         InitAgr();
@@ -119,32 +115,25 @@ void CfRSH5Doc::Serialize(CArchive& ar)
         ar.Read(Pagregat, (N / 2 + 1) * sizeof(*Pagregat));
         ar.Read(ConPat, (N + 1) * sizeof(*ConPat));
         ar.Read(&s, sizeof(s));
-        Xmax = Ymax = Zmax = sqrt(N) * (2 * Rmax + Rmid) / 2;
-        GetminX = -Xmax;
-        GetminY = -Ymax;
-        GetmaxX = Xmax;
-        GetmaxY = Ymax;
-        GetScX = (GetmaxX - GetminX);
-        GetScY = (GetmaxY - GetminY);
-
     }// TODO: добавьте код загрузки
 }
 
 void CfRSH5Doc::OnIdle()
 {
+    if (t > 0.01) return;
     if (FirstPat->q) CulonForces();
 
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
         for (Pj = Pi->next; Pj != NULL; Pj = Pj->next)
         {
             float dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
-            if (dist_ij <= pow((Pi->R + Pj->R), 2)) UnitPaticle(Pi, Pj);
+            if (dist_ij <= pow((5000000 * Pi->R + 5000000 * Pj->R), 2)) UnitPaticle(Pi, Pj);
         }
     AgrForces();
     MovePart();
     t = t + dt;
+    
     SetModifiedFlag();
-
 }
 
 void CfRSH5Doc::MakeArray(int N)
@@ -165,7 +154,6 @@ void CfRSH5Doc::MakeArray(int N)
     CMass = new Agregat[N / 2];
     Pagregat = new int[N / 2];
     ConPat = new int[N];
-
 }
 
 void CfRSH5Doc::DistroyArray()
@@ -247,20 +235,20 @@ void CfRSH5Doc::InitParticle()
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
     {
         sign = 1 - sign;
-    m1: Pi->X = -Xmax + GetScX * float(rand()) / RAND_MAX;
-        Pi->Y = -Ymax + GetScY * float(rand()) / RAND_MAX;
-        Pi->Z = -Xmax + GetScX * float(rand()) / RAND_MAX;
+    m1: Pi->X = 640 * float(rand()) / RAND_MAX;
+        Pi->Y = 480 * float(rand()) / RAND_MAX;
+        Pi->Z = 640 * float(rand()) / RAND_MAX;
 
-        Pi->R = Rmax - (Rmax - Rmin) * float(rand()) / RAND_MAX;
-        /*  if (Pi->N<=N*0.2) Pi->R=Rmin;
-            else if (Pi->N<=N*0.8) Pi->R=(Rmin+Rmax)/2;
-            else Pi->R=Rmax;
-        */
+        //Pi->R = Rmax - (Rmax - Rmin) * float(rand()) / RAND_MAX;
+        if (Pi->N <= N * 0.2) Pi->R = Rmin;
+        else if (Pi->N <= N * 0.8) Pi->R = (Rmin + Rmax) / 2;
+        else Pi->R = Rmax;
+
 
         for (Pj = FirstPat; Pj != Pi; Pj = Pj->next)
         {
             float dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
-            if (dist_ij <= pow(Pi->R + Pj->R, 2)) goto m1;
+            if (dist_ij <= pow(5000000 * Pi->R + 5000000 * Pj->R, 2)) goto m1;
         }
         if (needCharge) if (sign) Pi->q = MaxQ * eQulon;
         else Pi->q = -MaxQ * eQulon;
@@ -346,9 +334,9 @@ void CfRSH5Doc::MovePart()
             if ((Pi->X > GetmaxX) || (Pi->X < GetminX)) Pi->Vx = -Pi->Vx;
             if ((Pi->Y > GetmaxY) || (Pi->Y < GetminY)) Pi->Vy = -Pi->Vy;
             if ((Pi->Z > GetmaxX) || (Pi->Z < GetminX)) Pi->Vz = -Pi->Vz;
-            Pi->X += dt * Pi->Vx;
-            Pi->Y += dt * Pi->Vy;
-            Pi->Z += dt * Pi->Vz;
+            Pi->X += 5000000 * dt * Pi->Vx;
+            Pi->Y += 5000000 * dt * Pi->Vy;
+            Pi->Z += 5000000 * dt * Pi->Vz;
         }
 }
 
@@ -614,9 +602,9 @@ void CfRSH5Doc::AgrForces()
         CMass[kk].Vx += dVx;
         CMass[kk].Vy += dVy;
         CMass[kk].Vz += dVz;
-        CMass[kk].X += dt * CMass[kk].Vx;
-        CMass[kk].Y += dt * CMass[kk].Vy;
-        CMass[kk].Z += dt * CMass[kk].Vz;
+        CMass[kk].X += 5000000 * dt * CMass[kk].Vx;
+        CMass[kk].Y += 5000000 * dt * CMass[kk].Vy;
+        CMass[kk].Z += 5000000 * dt * CMass[kk].Vz;
 
         //-------- ‚лзЁб«Ґ­ЁҐ гЈ«  Phi --------//
         RPoint phi;
@@ -631,9 +619,9 @@ void CfRSH5Doc::AgrForces()
         while (i)
         {
             Pi = Npat(i);
-            Pi->X += dt * (CMass[kk].Vx + dVx);
-            Pi->Y += dt * (CMass[kk].Vy + dVy);
-            Pi->Z += dt * (CMass[kk].Vz + dVz);
+            Pi->X += 5000000 * dt * (CMass[kk].Vx + dVx);
+            Pi->Y += 5000000 * dt * (CMass[kk].Vy + dVy);
+            Pi->Z += 5000000 * dt * (CMass[kk].Vz + dVz);
             dX = Pi->X - CMass[kk].X;
             dY = Pi->Y - CMass[kk].Y;
             Pi->X = CMass[kk].X + dX * cos(phi.Z) - dY * sin(phi.Z);
@@ -651,6 +639,9 @@ void CfRSH5Doc::AgrForces()
         }
     }
 }
+//
+// CfRSH5Doc commands
+//
 
 #ifdef SHARED_HANDLERS
 
@@ -706,7 +697,7 @@ void CfRSH5Doc::SetSearchContent(const CString& value)
 
 #endif // SHARED_HANDLERS
 
-// Диагностика CCfRSH5Doc
+// Диагностика CfRSH5Doc
 
 #ifdef _DEBUG
 void CfRSH5Doc::AssertValid() const
