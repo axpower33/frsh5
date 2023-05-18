@@ -67,13 +67,13 @@ void CfRSH5View::Line(float x1, float y1, float x2, float y2, CDC* pDC, CfRSH5Do
 void CfRSH5View::OnDraw(CDC* pDC)
 {
 	CfRSH5View* pSender=new CfRSH5View();
-	HPEN bluePen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
-	HPEN redPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-	HPEN magPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 255));
+	HPEN bluePen = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
+	HPEN redPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+	HPEN magPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 255));
 
 	//CBrush  redBrush = CBrush(RGB(255, 0, 0));
-	//CBrush 	blackBrush = CBrush(RGB(0, 0, 0));
-	//CBrush 	blueBrush = CBrush(RGB(0, 0, 255));
+    //CBrush 	blackBrush = CBrush(RGB(0, 0, 0));
+	HBRUSH 	blueBrush = HBRUSH(RGB(0, 0, 255));
 	//CBrush magBrush = CBrush(RGB(255, 0, 255));
 
 
@@ -82,16 +82,17 @@ void CfRSH5View::OnDraw(CDC* pDC)
 
 	if (!pDoc)
 		return;
-
 	CRect r;
 	GetClientRect(&r);
 
-	//pDC->FillRect(r, &blackBrush);
-	pDC->SelectObject(&magPen);
+	pDC->FillRect(r, &CBrush(RGB(0, 0, 0)));
 	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
 	{
-		if (pDoc->Pi->q != 0) pDC->SelectObject(pDoc->Pi->q > 0 ? &redPen : &bluePen);
-		else pDC->SelectObject(&magPen);
+		if (pDoc->Pi->q>0)
+			pDC->SelectObject(redPen);
+		else
+			pDC->SelectObject(bluePen);
+
 		pDC->Ellipse((int)(pDoc->Pi->X - 5000000*pDoc->Pi->R),
 			(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
 			(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R ),

@@ -42,9 +42,9 @@ CfRSH5Doc::CfRSH5Doc() noexcept
 {
     // TODO: добавьте код для одноразового вызова конструктора
     srand(1);
-    Rmax = 25e-7;
-    Rmin = 15e-7;
-    Rmid = 20e-7;
+    Rmax = 35e-7;
+    Rmin = 25e-7;
+    Rmid = 30e-7;
     MaxQ = 27e-18;
     Tmshft = 0.0001;
     DensAg = 10.5;
@@ -63,7 +63,7 @@ BOOL CfRSH5Doc::OnNewDocument()
     {
         needCharge = true;
         N = 50;
-        dt = 3e-5;
+        dt = 2e-5;
         t = 0;
         s = 1;
         MakeArray(N);
@@ -120,7 +120,6 @@ void CfRSH5Doc::Serialize(CArchive& ar)
 
 void CfRSH5Doc::OnIdle()
 {
-    if (t > 0.01) return;
     if (FirstPat->q) CulonForces();
 
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
@@ -134,6 +133,7 @@ void CfRSH5Doc::OnIdle()
     t = t + dt;
     
     SetModifiedFlag();
+    UpdateAllViews(NULL, 0L, NULL);
 }
 
 void CfRSH5Doc::MakeArray(int N)
@@ -250,10 +250,9 @@ void CfRSH5Doc::InitParticle()
             float dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
             if (dist_ij <= pow(5000000 * Pi->R + 5000000 * Pj->R, 2)) goto m1;
         }
-        if (needCharge) if (sign) Pi->q = MaxQ * eQulon;
-        else Pi->q = -MaxQ * eQulon;
-        else Pi->q = 0;
-
+        if (sign) Pi->q = 2e-19;
+        else Pi->q = -2e-19;
+ 
         Pi->mass = 4 / 3 * M_PI * pow(Pi->R, 3) / DensAg;
         //TmPat[Pi->N]=Tmshft*float(rand())/RAND_MAX;
 
@@ -331,9 +330,9 @@ void CfRSH5Doc::MovePart()
             Pi->Vy += dVy;
             Pi->Vz += dVz;
             // RandWalk(TmPat[Pi->N],Pi->Vx,Pi->Vy,Pi->Vz);
-            if ((Pi->X > GetmaxX) || (Pi->X < GetminX)) Pi->Vx = -Pi->Vx;
-            if ((Pi->Y > GetmaxY) || (Pi->Y < GetminY)) Pi->Vy = -Pi->Vy;
-            if ((Pi->Z > GetmaxX) || (Pi->Z < GetminX)) Pi->Vz = -Pi->Vz;
+            if ((Pi->X > 640) || (Pi->X < 0)) Pi->Vx = -Pi->Vx;
+            if ((Pi->Y > 480) || (Pi->Y < 0)) Pi->Vy = -Pi->Vy;
+            if ((Pi->Z > 640) || (Pi->Z < 0)) Pi->Vz = -Pi->Vz;
             Pi->X += 5000000 * dt * Pi->Vx;
             Pi->Y += 5000000 * dt * Pi->Vy;
             Pi->Z += 5000000 * dt * Pi->Vz;
@@ -399,7 +398,7 @@ void CfRSH5Doc::ChangeCMass(int Nagr)
 
     Np = Pagregat[Nagr];
 
-    CMass[Nagr].Jx = 0;
+    CMass[Nagr].Jx = CMass[Nagr].Jy = CMass[Nagr].Jz= 0;
     CMass[Nagr].Mx = CMass[Nagr].My = CMass[Nagr].Mz = 0;
 
     while (Np)
@@ -596,9 +595,9 @@ void CfRSH5Doc::AgrForces()
         dVx = dt * dF[kk].X / mass;
         dVy = dt * dF[kk].Y / mass;
         dVz = dt * dF[kk].Z / mass;
-        if ((CMass[kk].X > GetmaxX) || (CMass[kk].X < GetminX)) CMass[kk].Vx = -CMass[kk].Vx;
-        if ((CMass[kk].Y > GetmaxY) || (CMass[kk].Y < GetminY)) CMass[kk].Vy = -CMass[kk].Vy;
-        if ((CMass[kk].Z > GetmaxX) || (CMass[kk].Z < GetminX)) CMass[kk].Vz = -CMass[kk].Vz;
+        if ((CMass[kk].X > 640) || (CMass[kk].X < 0)) CMass[kk].Vx = -CMass[kk].Vx;
+        if ((CMass[kk].Y > 480) || (CMass[kk].Y < 0)) CMass[kk].Vy = -CMass[kk].Vy;
+        if ((CMass[kk].Z > 640) || (CMass[kk].Z < 0)) CMass[kk].Vz = -CMass[kk].Vz;
         CMass[kk].Vx += dVx;
         CMass[kk].Vy += dVy;
         CMass[kk].Vz += dVz;
