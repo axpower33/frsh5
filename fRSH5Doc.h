@@ -77,19 +77,25 @@ protected:
     void DistroyArray();
     Particle* Npat(int Np);
     void MxwDstr();
+    void SizePatDistr();
+    void SpontDstr();
+    void zeroDstr();
     void InitParticle();
     void InitAgr();
+    int sortOfZ(const void* a, const void* b);
     void CulonForces();
     bool IsPatInAgr(Particle* Pi, Particle* Pj);
     void MovePart();
     void AngleSpeed(int kk, RPoint& W);
     void ChangeCMass(int Nagr);
-    float GetMass(int i);
+    double GetMass(int i);
     void SetAgrSpeed(Particle* Pi);
     void AddPattoAgr(Particle* Pi, Particle* Pj);
     void PushAway(Particle* Pi, Particle* Pj);
     void UnitPaticle(Particle* Pi, Particle* Pj);
     void AgrForces();
+    int NumPatOutAgr();
+    int NumPatInAgr();
 public:
     int N;
     float dt;
@@ -103,12 +109,13 @@ public:
     float Xmax;
     float Ymax;
     float Zmax;
+    int xx;
     Particle* FirstPat;
     Particle* PNp;
-    Agregat* dF;
-    int* Pagregat;
-    Agregat* CMass;
-    int* ConPat;
+    Agregat dF[300];
+    int Pagregat[150];
+    Agregat CMass[150];
+    int ConPat[150];
     int s;
     float t;
     Particle* LastPat;
@@ -122,6 +129,7 @@ public:
     float rangeX;
     float rangeY;
     float rangeR;
+    bool WorkShow;
 
     // Созданные функции схемы сообщений
 protected:

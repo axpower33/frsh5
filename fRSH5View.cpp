@@ -9,7 +9,6 @@
 #ifndef SHARED_HANDLERS
 #include "fRSH5.h"
 #endif
-
 //#include "fRSH5Doc.h"
 #include "fRSH5View.h"
 
@@ -66,42 +65,48 @@ void CfRSH5View::Line(float x1, float y1, float x2, float y2, CDC* pDC, CfRSH5Do
 
 void CfRSH5View::OnDraw(CDC* pDC)
 {
-	CfRSH5View* pSender=new CfRSH5View();
-	HPEN bluePen = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
-	HPEN redPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-	HPEN magPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 255));
-
-	//CBrush  redBrush = CBrush(RGB(255, 0, 0));
-    //CBrush 	blackBrush = CBrush(RGB(0, 0, 0));
-	HBRUSH 	blueBrush = HBRUSH(RGB(0, 0, 255));
-	//CBrush magBrush = CBrush(RGB(255, 0, 255));
-
-
+	HBRUSH hbrush = CreateSolidBrush(RGB(0, 0, 0));
 	CfRSH5Doc* pDoc = GetDocument();
-    ASSERT_VALID(pDoc);
+	ASSERT_VALID(pDoc);
 
 	if (!pDoc)
 		return;
 	CRect r;
 	GetClientRect(&r);
+	
+	HDC hdc = pDC->m_hDC;
 
-	pDC->FillRect(r, &CBrush(RGB(0, 0, 0)));
+	FillRect(hdc, r, hbrush);
 	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
 	{
-		if (pDoc->Pi->q>0)
-			pDC->SelectObject(redPen);
+		if (pDoc->Pi->q > 0)
+		{
+
+			HPEN redPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+			HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
+			Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+			DeleteObject(redPen);
+			DeleteObject(holdr);
+		}
 		else
-			pDC->SelectObject(bluePen);
-
-		pDC->Ellipse((int)(pDoc->Pi->X - 5000000*pDoc->Pi->R),
-			(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-			(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R ),
-			(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-
+		{
+			HPEN bluePen = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
+			HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
+			Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+				(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+			DeleteObject(bluePen);
+			DeleteObject(holdb);
+		}
 	}
-	//pDoc->UpdateAllViews(pSender,0L,NULL);
-
-	// TODO: добавьте здесь код отрисовки для собственных данных
+	DeleteObject(r);
+	DeleteObject(hbrush);
+	DeleteObject(pDoc);
+	
 }
 
 

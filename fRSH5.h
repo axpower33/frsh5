@@ -13,6 +13,27 @@
 // CfRSH5App:
 // Сведения о реализации этого класса: fRSH5.cpp
 //
+class CFrModInCndDlg :public CDialogEx
+{
+public:
+	int m_Npat;
+	float m_dt;
+	CFrModInCndDlg() noexcept;
+	void OnFrMod_InCnd();
+
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_FrModInCnd };
+#endif
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
+	// Реализация
+protected:
+
+	void OnChangeEdit1();
+	void OnChangeEdit2();
+	DECLARE_MESSAGE_MAP();
+
+};
 
 class CfRSH5App : public CWinAppEx
 {
@@ -38,3 +59,4 @@ public:
 };
 
 extern CfRSH5App theApp;
+extern CFrModInCndDlg* FrModInCndDlg;

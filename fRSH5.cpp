@@ -17,40 +17,19 @@
 #define new DEBUG_NEW
 #endif
 
+CFrModInCndDlg* FrModInCndDlg=new CFrModInCndDlg();
 
 // CfRSH5App
-class CFrModInCndDlg :public CDialogEx
-{
-public:
-	int m_Npat;
-	float m_dt;
-    CFrModInCndDlg() noexcept;
-	void OnFrMod_InCnd();
-
-#ifdef AFX_DESIGN_TIME
-	   enum { IDD = IDD_FrModInCnd };
-#endif
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
-	// Реализация
-protected:
-
-	void OnChangeEdit1();
-	void OnChangeEdit2();
-	DECLARE_MESSAGE_MAP();
-
-};
-
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 {
-	int		    m_Npat = 50;
-	float		m_dt = 2e-6;
+	int		    m_Npat = 60;
+	float		m_dt = 1e-5;
 }
 
 void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
-	int m_Npat = 50;
-	float m_dt = 2e-6;
+	int m_Npat = 60;
+	float m_dt = 1e-5;
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFrModInCndDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_Npat);
@@ -61,8 +40,7 @@ void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 
 void CFrModInCndDlg::OnFrMod_InCnd()
 {
-	CFrModInCndDlg FrModInCndDlg;
-	FrModInCndDlg.DoModal();
+	FrModInCndDlg->DoModal(); 
 }
 
 void CFrModInCndDlg::OnChangeEdit1()

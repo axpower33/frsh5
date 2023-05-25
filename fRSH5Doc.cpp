@@ -38,6 +38,8 @@ int Xmax = 640;
 int Zmax = 640;
 int Ymax = 480;
 
+//CFrModInCndDlg FrModInCndDlg;
+
 CfRSH5Doc::CfRSH5Doc() noexcept
 {
     // TODO: добавьте код для одноразового вызова конструктора
@@ -49,11 +51,14 @@ CfRSH5Doc::CfRSH5Doc() noexcept
     Tmshft = 0.0001;
     DensAg = 10.5;
     Tk = 300;
+    mouse_event(MOUSEEVENTF_MOVE, 100, 100, 0, 1);
 }
 
 CfRSH5Doc::~CfRSH5Doc()
 {
 }
+
+//CFrModInCndDlg* FrModInCndDlg= new CFrModInCndDlg();
 
 BOOL CfRSH5Doc::OnNewDocument()
 {
@@ -62,10 +67,14 @@ BOOL CfRSH5Doc::OnNewDocument()
     else
     {
         needCharge = true;
-        N = 50;
-        dt = 2e-5;
+        FrModInCndDlg->DoModal();
+        N = 60;
+        dt = 1e-5;
+
         t = 0;
         s = 1;
+        xx = 0;
+       
         MakeArray(N);
         InitParticle();
         InitAgr();
@@ -131,10 +140,20 @@ void CfRSH5Doc::OnIdle()
     AgrForces();
     MovePart();
     t = t + dt;
-    
-    SetModifiedFlag();
-    UpdateAllViews(NULL, 0L, NULL);
+
+    UpdateAllViews(NULL);
+    //InvalidateRect(NULL, NULL, false);
+    if (xx == 0)
+    {
+        mouse_event(MOUSEEVENTF_WHEEL, 100, 100, 1000, 1); xx = 1;
+    }
+    else 
+    {
+        mouse_event(MOUSEEVENTF_HWHEEL, 100, 100, 1000, 1); xx = 0;
+    }
 }
+    
+        
 
 void CfRSH5Doc::MakeArray(int N)
 {
@@ -150,23 +169,20 @@ void CfRSH5Doc::MakeArray(int N)
         TempP->N = i;
         LastPat = TempP;
     }
-    dF = new Agregat[N / 2];
-    CMass = new Agregat[N / 2];
-    Pagregat = new int[N / 2];
-    ConPat = new int[N];
 }
+
 
 void CfRSH5Doc::DistroyArray()
 {
-    for (TempP = FirstPat->next; TempP->next != NULL; TempP = TempP->next)
-        delete TempP->pred;
-    delete TempP;
+    if (FirstPat == NULL) return;
+    TempP = FirstPat->next;
+    do
+        delete FirstPat;
+    while (FirstPat = TempP, TempP = TempP->next, FirstPat != NULL);
+    FirstPat = NULL;
 
-    delete[] ConPat;
-    delete[] Pagregat;
-    delete[] CMass;
-    delete[] dF;
 }
+
 
 Particle* CfRSH5Doc::Npat(int Np)
 {
@@ -175,38 +191,69 @@ Particle* CfRSH5Doc::Npat(int Np)
     return (TempP);
 }
 
+
+void CfRSH5Doc::SizePatDistr()
+{
+    
+    for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
+        if (Pi->N <= N * 0.2) Pi->R = Rmin;
+        else if (Pi->N <= N * 0.8) Pi->R = (Rmin + Rmax) / 2;
+        else Pi->R = Rmax;
+
+}
+
+void CfRSH5Doc::SpontDstr()
+{
+    double Vel, alpha, theta;
+    for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
+    {
+        Vel = 1.41 * sqrt(2 * kk * Tk / Pi->mass) * double(rand()) / RAND_MAX;
+        alpha = 2 * M_PI * double(rand()) / RAND_MAX;
+        theta = 2 * M_PI * double(rand()) / RAND_MAX;
+        Pi->Vx = Vel * cos(theta) * sin(alpha);
+        Pi->Vy = Vel * cos(theta) * cos(alpha);
+        Pi->Vz = Vel * sin(theta);
+    }
+}
+
+
+void CfRSH5Doc::zeroDstr()
+{
+    for (Pi = FirstPat; Pi != NULL; Pi = Pi->next) Pi->Vx = Pi->Vy = Pi->Vz = 0;
+}
+
 void CfRSH5Doc::MxwDstr()
 {
-    float Vmin = 0;
-    float Vmax = 0.25;
-    int kmax = N / 3;
+    int Vminz = 0;
+    double Vmax = 0.25;
+    int kmax;
+    if (N != 2) kmax = N / 3; else kmax = 1;
     int i, j;
     double F;
-    float dN, V, Vel, dv, alpha, theta;
+    double dN, V, Vel, dv, alpha, theta;
     int rdn;
 
     j = 0; i = 1;
-    dv = (Vmax - Vmin) / kmax;
+    dv = (Vmax - Vminz) / kmax;
 
     Pj = FirstPat;
 
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
     {
-        V = Vmin + dv * i;
+        V = Vminz + dv * i;
         F = sqrt(Pi->mass / (2 * M_PI * kk * Tk));
         F = pow(F, 3);
         F = F * exp(-(Pi->mass * pow(V, 2)) / (2 * kk * Tk)) * 4 * M_PI * pow(V, 2);
         dN = N * F * dv;
-
-        rdn = (int)dN;
+        rdn = (int)(dN + 0.5);
         i++;
         if ((j + rdn) < N)
             while (rdn)
             {
                 j++;
                 Vel = V;
-                alpha = 2 * M_PI * float(rand()) / RAND_MAX;
-                theta = 2 * M_PI * float(rand()) / RAND_MAX;
+                alpha = 2 * M_PI * double(rand()) / RAND_MAX;
+                theta = 2 * M_PI * double(rand()) / RAND_MAX;
                 Pj->Vx = Vel * cos(theta) * sin(alpha);
                 Pj->Vy = Vel * cos(theta) * cos(alpha);
                 Pj->Vz = Vel * sin(theta);
@@ -219,8 +266,8 @@ void CfRSH5Doc::MxwDstr()
     while (cnt--)
     {
         Vel = sqrt((8 * kk * Tk) / (M_PI * Pj->mass));
-        alpha = 2 * M_PI * float(rand()) / RAND_MAX;
-        theta = 2 * M_PI * float(rand()) / RAND_MAX;
+        alpha = 2 * M_PI * double(rand()) / RAND_MAX;
+        theta = M_PI * double(rand()) / RAND_MAX;
         Pj->Vx = Vel * cos(theta) * sin(alpha);
         Pj->Vy = Vel * cos(theta) * cos(alpha);
         Pj->Vz = Vel * sin(theta);
@@ -230,42 +277,39 @@ void CfRSH5Doc::MxwDstr()
 
 void CfRSH5Doc::InitParticle()
 {
+    int TmPat[300];
     int sign = 0;
-    float sq, alpha;
+    //double sq;// , alpha;
+
+    SizePatDistr();
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
     {
-        sign = 1 - sign;
-    m1: Pi->X = 640 * float(rand()) / RAND_MAX;
-        Pi->Y = 480 * float(rand()) / RAND_MAX;
-        Pi->Z = 640 * float(rand()) / RAND_MAX;
 
-        //Pi->R = Rmax - (Rmax - Rmin) * float(rand()) / RAND_MAX;
-        if (Pi->N <= N * 0.2) Pi->R = Rmin;
-        else if (Pi->N <= N * 0.8) Pi->R = (Rmin + Rmax) / 2;
-        else Pi->R = Rmax;
-
+    m1: Pi->X = 640 * double(rand()) / RAND_MAX;
+        Pi->Y = 480 * double(rand()) / RAND_MAX;
+        Pi->Z = 640 * double(rand()) / RAND_MAX;
 
         for (Pj = FirstPat; Pj != Pi; Pj = Pj->next)
         {
-            float dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
-            if (dist_ij <= pow(5000000 * Pi->R + 5000000 * Pj->R, 2)) goto m1;
+            double dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
+            if (dist_ij <= pow((5000000 * Pi->R + 5000000 * Pj->R), 2)) goto m1;
         }
-        if (sign) Pi->q = 2e-19;
-        else Pi->q = -2e-19;
- 
-        Pi->mass = 4 / 3 * M_PI * pow(Pi->R, 3) / DensAg;
-        //TmPat[Pi->N]=Tmshft*float(rand())/RAND_MAX;
 
+
+        if (sign == 0) Pi->q = 0; else if (sign == 1) Pi->q = 27e-19; else if (sign == 2) Pi->q = -27e-19;
+        sign++;
+        if (sign == 3) sign = 0;
+
+        Pi->mass = ((4 / 3) * M_PI * pow(Pi->R, 3)) / DensAg;
+        TmPat[Pi->N] = Tmshft * double(rand()) / RAND_MAX;
         Pi->agr = 0;
         Pi->stop = false;
-        Pi->VanX = 0;
-        Pi->VanY = 0;
-        Pi->VanZ = 0;
         Pi->Fx = 0;
         Pi->Fy = 0;
         Pi->Fz = 0;
     }
     MxwDstr();
+    
 }
 
 void CfRSH5Doc::InitAgr()
@@ -282,8 +326,8 @@ bool CfRSH5Doc::IsPatInAgr(Particle* Pi, Particle* Pj)
 
 void CfRSH5Doc::CulonForces()
 {
-    int Nagr;
-    float Temp, dX, dY, dZ;
+    //int Nagr;
+    double Temp, dX, dY, dZ;
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
     {
         Pi->Fx = 0;
@@ -309,16 +353,25 @@ void CfRSH5Doc::CulonForces()
         Pi->Fx *= C_SI;
         Pi->Fy *= C_SI;
         Pi->Fz *= C_SI;
-        //  float U=Pi->Fx*dX+Pi->Fy*dY+Pi->Fz*dZ;
-        //  float Ek=Pi->mass*(pow(Pi->Vx,2)+pow(Pi->Vy,2)+pow(Pi->Vz,2))/2;
+        //double U=Pi->Fx*dX+Pi->Fy*dY+Pi->Fz*dZ;
+        //double Ek=Pi->mass*(pow(Pi->Vx,2)+pow(Pi->Vy,2)+pow(Pi->Vz,2))/2;
     }
 }
 
+#define Pprt(a) (*(Particle**)a)
+int CfRSH5Doc::sortOfZ(const void* a, const void* b)
+{
+    if (Pprt(a)->Z > Pprt(b)->Z) return  1; else
+        if (Pprt(a)->Z < Pprt(b)->Z) return -1; else
+            return  0;
+}
+
+
 void CfRSH5Doc::MovePart()
 {
-    int i;
-    char st[10];
-    float dVx, dVy, dVz;
+    //int i, j;
+    //char st[10];
+    double dVx, dVy, dVz, dx, dy, dz;
 
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
         if (Pi->stop == false)
@@ -329,19 +382,22 @@ void CfRSH5Doc::MovePart()
             Pi->Vx += dVx;
             Pi->Vy += dVy;
             Pi->Vz += dVz;
-            // RandWalk(TmPat[Pi->N],Pi->Vx,Pi->Vy,Pi->Vz);
-            if ((Pi->X > 640) || (Pi->X < 0)) Pi->Vx = -Pi->Vx;
-            if ((Pi->Y > 480) || (Pi->Y < 0)) Pi->Vy = -Pi->Vy;
-            if ((Pi->Z > 640) || (Pi->Z < 0)) Pi->Vz = -Pi->Vz;
-            Pi->X += 5000000 * dt * Pi->Vx;
-            Pi->Y += 5000000 * dt * Pi->Vy;
-            Pi->Z += 5000000 * dt * Pi->Vz;
+            //RandWalk(TmPat[Pi->N],Pi->Vx,Pi->Vy,Pi->Vz);
+
+            Pi->X += dx = 5000000 * dt * Pi->Vx;
+            Pi->Y += dy = 5000000 * dt * Pi->Vy;
+            Pi->Z += dz = 5000000 * dt * Pi->Vz;
+
+            if ((Pi->X > 640) || (Pi->X < 0)) { Pi->Vx = -Pi->Vx; Pi->X -= dx; }
+            if ((Pi->Y > 480) || (Pi->Y < 0)) { Pi->Vy = -Pi->Vy; Pi->Y -= dy; }
+            if ((Pi->Z > 640) || (Pi->Z < 0)) { Pi->Vz = -Pi->Vz; Pi->Z -= dz; }
         }
 }
 
 void CfRSH5Doc::AngleSpeed(int kk, RPoint& W)
 {
-    float Nx = 0; float Ny = 0; float Nz = 0;
+    // Џ®«­л© ¬®¬Ґ­в бЁ«, ¤Ґ©бвўгойЁ© ­   ЈаҐЈ в б® бв®а®­л ®бв «м­ле з бвЁж
+    double Nx = 0; double Ny = 0; double Nz = 0;
 
     int i = Pagregat[kk];
     while (i)
@@ -360,10 +416,11 @@ void CfRSH5Doc::AngleSpeed(int kk, RPoint& W)
     W.Z = CMass[kk].Mz / CMass[kk].Jz;
 }
 
+// ‚лзЁб«пҐв жҐ­ва ¬ бб, Ї®«­л© ¬®¬Ґ­в, ¬®¬Ґ­в Ё­ҐажЁЁ  ЈаҐЈ в  Nagr
 void CfRSH5Doc::ChangeCMass(int Nagr)
 {
     int Np = Pagregat[Nagr];
-    float Mass = 0;
+    double Mass = 0;
     CMass[Nagr].X = 0;
     CMass[Nagr].Y = 0;
     CMass[Nagr].Z = 0;
@@ -371,18 +428,19 @@ void CfRSH5Doc::ChangeCMass(int Nagr)
     CMass[Nagr].Vx = 0;
     CMass[Nagr].Vy = 0;
     CMass[Nagr].Vz = 0;
+    // ‚лзЁб«Ґ­ЁҐ жҐ­ва  ¬ бб  ЈаҐЈ в  Nagr
 
     while (Np)
     {
         PNp = Npat(Np);
         Mass += PNp->mass;
-        CMass[Nagr].X += PNp->mass * PNp->X;
-        CMass[Nagr].Y += PNp->mass * PNp->Y;
-        CMass[Nagr].Z += PNp->mass * PNp->Z;
+        CMass[Nagr].X +=  PNp->mass * PNp->X;
+        CMass[Nagr].Y +=  PNp->mass * PNp->Y;
+        CMass[Nagr].Z +=  PNp->mass * PNp->Z;
 
-        CMass[Nagr].Vx += PNp->mass * PNp->Vx;
-        CMass[Nagr].Vy += PNp->mass * PNp->Vy;
-        CMass[Nagr].Vz += PNp->mass * PNp->Vz;
+        CMass[Nagr].Vx +=  PNp->mass * PNp->Vx;
+        CMass[Nagr].Vy +=  PNp->mass * PNp->Vy;
+        CMass[Nagr].Vz +=  PNp->mass * PNp->Vz;
 
         Np = ConPat[Np];
     }
@@ -395,18 +453,19 @@ void CfRSH5Doc::ChangeCMass(int Nagr)
     CMass[Nagr].Vy /= Mass;
     CMass[Nagr].Vz /= Mass;
 
+    // ‚лзЁб«Ґ­ЁҐ Ї®«­®Ј® ¬®¬Ґ­в  M Ё ¬®¬Ґ­в  Ё­ҐажЁЁ J  ЈаҐЈ в  Nagr
 
     Np = Pagregat[Nagr];
 
-    CMass[Nagr].Jx = CMass[Nagr].Jy = CMass[Nagr].Jz= 0;
+    CMass[Nagr].Jx = CMass[Nagr].Jy = CMass[Nagr].Jz = 0;
     CMass[Nagr].Mx = CMass[Nagr].My = CMass[Nagr].Mz = 0;
 
     while (Np)
     {
         PNp = Npat(Np);
-        CMass[Nagr].Jx += PNp->mass * ((pow(PNp->Z - CMass[Nagr].Z, 2) + pow(PNp->Y - CMass[Nagr].Y, 2)) + 0.4 * pow(PNp->R, 2));
-        CMass[Nagr].Jy += PNp->mass * ((pow(PNp->X - CMass[Nagr].X, 2) + pow(PNp->Z - CMass[Nagr].Z, 2)) + 0.4 * pow(PNp->R, 2));
-        CMass[Nagr].Jz += PNp->mass * ((pow(PNp->X - CMass[Nagr].X, 2) + pow(PNp->Y - CMass[Nagr].Y, 2)) + 0.4 * pow(PNp->R, 2));
+        CMass[Nagr].Jx += PNp->mass * ((pow(PNp->Z - CMass[Nagr].Z, 2) + pow(PNp->Y - CMass[Nagr].Y, 2)) + 0.4 * pow(5000000 * PNp->R, 2));
+        CMass[Nagr].Jy += PNp->mass * ((pow(PNp->X - CMass[Nagr].X, 2) + pow(PNp->Z - CMass[Nagr].Z, 2)) + 0.4 * pow(5000000 * PNp->R, 2));
+        CMass[Nagr].Jz += PNp->mass * ((pow(PNp->X - CMass[Nagr].X, 2) + pow(PNp->Y - CMass[Nagr].Y, 2)) + 0.4 * pow(5000000 * PNp->R, 2));
 
         CMass[Nagr].Mx += PNp->mass * ((PNp->Y - CMass[Nagr].Y) * (PNp->Vz - CMass[Nagr].Vz) - (PNp->Z - CMass[Nagr].Z) * (PNp->Vy - CMass[Nagr].Vy));
         CMass[Nagr].My += PNp->mass * ((PNp->Z - CMass[Nagr].Z) * (PNp->Vx - CMass[Nagr].Vx) - (PNp->X - CMass[Nagr].X) * (PNp->Vz - CMass[Nagr].Vz));
@@ -416,9 +475,10 @@ void CfRSH5Doc::ChangeCMass(int Nagr)
     }
 }
 
-float CfRSH5Doc::GetMass(int i)
+// Џа®жҐ¤гал ¤«п а Ў®вл б  ЈаҐЈ в ¬Ё
+double CfRSH5Doc::GetMass(int i)
 {
-    float ret = 0;
+    double ret = 0;
     if (Pi->stop)
     {
         i = Pagregat[Pi->agr];
@@ -432,7 +492,7 @@ float CfRSH5Doc::GetMass(int i)
     return ret;
 }
 
-
+// “бв ­®ўЄ  «Ё­Ґ©­ле бЄ®а®бвҐ© г з бвЁж ў  ЈаҐЈ вҐ б®¤Ґа¦ йЁе i
 void CfRSH5Doc::SetAgrSpeed(Particle* Pi)
 {
     RPoint W;
@@ -451,14 +511,11 @@ void CfRSH5Doc::SetAgrSpeed(Particle* Pi)
     }
 }
 
-//  „®Ў ў«пҐв j з бвЁжг Є  ЈаҐЈ вг ­ зЁ­ ойҐ¬гбп б i з бвЁж
+//  „®Ў ў«пҐв j з бвЁжг Є  ЈаҐЈ вг ­ зЁ­ ойҐ¬гбп б i з бвЁжл
 void CfRSH5Doc::AddPattoAgr(Particle* Pi, Particle* Pj)
 {
-    int i, j;
-    i = Pi->N;
-    j = Pj->N;
     Pj->agr = Pi->agr;
-
+    int i = Pi->N; int j = Pj->N;
     while (ConPat[i]) i = ConPat[i];
 
     ConPat[i] = j;
@@ -474,17 +531,17 @@ void CfRSH5Doc::AddPattoAgr(Particle* Pi, Particle* Pj)
     }
 }
 
-//      ђa§¤ўЁЈ Ґв ¤ўҐ з бвЁж
+//      ђa§¤ўЁЈ Ґв ¤ўҐ з бвЁжл
 void CfRSH5Doc::PushAway(Particle* Pi, Particle* Pj)
 {
-    float dX, dY, dZ, R;
+    double dX, dY, dZ, R;
 
-    R = Pi->R + Pj->R;
+    R = 5000000 * (Pi->R + Pj->R);
     dX = Pj->X - Pi->X;
     dY = Pj->Y - Pi->Y;
     dZ = Pj->Z - Pi->Z;
 
-    float dist_ij = sqrt(dX * dX + dY * dY + dZ * dZ);
+    double dist_ij = sqrt(dX * dX + dY * dY + dZ * dZ);
 
     dX *= (R - dist_ij) / dist_ij;
     dY *= (R - dist_ij) / dist_ij;
@@ -524,27 +581,29 @@ void CfRSH5Doc::UnitPaticle(Particle* Pi, Particle* Pj)
 
     if (IsPatInAgr(Pi, Pj)) return;
 
-
     PushAway(Pi, Pj);
 
     SetAgrSpeed(Pi);
     SetAgrSpeed(Pj);
 
+
     if (Pi->stop == false)
     {
         if (Pj->stop == false)
         {
+
             Pagregat[s] = Pi->N;
             Pi->agr = s;
             Pj->agr = s;
             s++;
             ConPat[i] = j;
+
         }
         else AddPattoAgr(Pj, Pi);
-
     }
     else
-        if (Pj->stop == false) AddPattoAgr(Pi, Pj);
+        if (Pj->stop == false)
+            AddPattoAgr(Pi, Pj);
         else
         {
             kk = Pi->agr;
@@ -568,6 +627,7 @@ void CfRSH5Doc::UnitPaticle(Particle* Pi, Particle* Pj)
             AddPattoAgr(Pj, Pl);
         }
 
+    // Џ®¬ҐвЁвм i Ё j Є Є ЇаЁ­ ¤«Ґ¦ йЁҐ Є  ЈаҐЈ в ¬
     Pi->stop = true;
     Pj->stop = true;
     ChangeCMass(Pj->agr);
@@ -576,8 +636,7 @@ void CfRSH5Doc::UnitPaticle(Particle* Pi, Particle* Pj)
 void CfRSH5Doc::AgrForces()
 {
     int i, kk;
-    float mass, dVx, dVy, dVz, dX, dY, dZ;
-
+    double mass, dVx, dVy, dVz, dX, dY, dZ;// , M1;
     for (kk = 1; kk < s; kk++)
     {
         i = Pagregat[kk];
@@ -592,12 +651,13 @@ void CfRSH5Doc::AgrForces()
             mass += Pi->mass;
             i = ConPat[i];
         }
+        if ((CMass[kk].X > 640) || (CMass[kk].X < 0))  CMass[kk].Vx = -CMass[kk].Vx;
+        if ((CMass[kk].Y > 480) || (CMass[kk].Y < 0))  CMass[kk].Vy = -CMass[kk].Vy;
+        if ((CMass[kk].Z > 640) || (CMass[kk].Z < 0))  CMass[kk].Vz = -CMass[kk].Vz;
+
         dVx = dt * dF[kk].X / mass;
         dVy = dt * dF[kk].Y / mass;
         dVz = dt * dF[kk].Z / mass;
-        if ((CMass[kk].X > 640) || (CMass[kk].X < 0)) CMass[kk].Vx = -CMass[kk].Vx;
-        if ((CMass[kk].Y > 480) || (CMass[kk].Y < 0)) CMass[kk].Vy = -CMass[kk].Vy;
-        if ((CMass[kk].Z > 640) || (CMass[kk].Z < 0)) CMass[kk].Vz = -CMass[kk].Vz;
         CMass[kk].Vx += dVx;
         CMass[kk].Vy += dVy;
         CMass[kk].Vz += dVz;
@@ -608,9 +668,9 @@ void CfRSH5Doc::AgrForces()
         //-------- ‚лзЁб«Ґ­ЁҐ гЈ«  Phi --------//
         RPoint phi;
         AngleSpeed(kk, phi);
-        phi.X = dt * phi.X;
-        phi.Y = dt * phi.Y;
-        phi.Z = dt * phi.Z;
+        phi.X = 5000000*dt * phi.X;
+        phi.Y = 5000000 * dt * phi.Y;
+        phi.Z = 5000000 * dt * phi.Z;
         //  ‚а йҐ­ЁҐ  ЈаҐЈ в  Ї®баҐ¤бвў®¬ ЇаҐ®Ўа §®ў ­Ёп Є®®а¤Ё­ в б Ї®¬®ймо---//
                              //---- ¬ ваЁжл ўа йҐ­Ёп ---//
 
@@ -637,6 +697,19 @@ void CfRSH5Doc::AgrForces()
             i = ConPat[i];
         }
     }
+}
+
+
+int CfRSH5Doc::NumPatOutAgr()
+{
+    int i = 0;
+    for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
+        if (!Pi->stop) i++;
+    return i;
+}
+int CfRSH5Doc::NumPatInAgr()
+{
+    return N - NumPatOutAgr();
 }
 //
 // CfRSH5Doc commands
