@@ -37,13 +37,15 @@ char getcd[128];
 int Xmax = 640;
 int Zmax = 640;
 int Ymax = 480;
+int sr = 0;
 
 //CFrModInCndDlg FrModInCndDlg;
 
 CfRSH5Doc::CfRSH5Doc() noexcept
 {
     // TODO: добавьте код для одноразового вызова конструктора
-    srand(1);
+    sr++;
+    srand(sr);
     Rmax = 35e-7;
     Rmin = 25e-7;
     Rmid = 30e-7;
@@ -58,8 +60,6 @@ CfRSH5Doc::~CfRSH5Doc()
 {
 }
 
-//CFrModInCndDlg* FrModInCndDlg= new CFrModInCndDlg();
-
 BOOL CfRSH5Doc::OnNewDocument()
 {
     if (!CDocument::OnNewDocument())
@@ -67,10 +67,10 @@ BOOL CfRSH5Doc::OnNewDocument()
     else
     {
         needCharge = true;
-        FrModInCndDlg->DoModal();
-        N = 60;
-        dt = 1e-5;
-
+        FrModInCndDlg.DoModal();
+        N = FrModInCndDlg.m_Npat;
+        dt= FrModInCndDlg.m_dt;
+        
         t = 0;
         s = 1;
         xx = 0;

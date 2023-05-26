@@ -59,4 +59,4 @@ public:
 };
 
 extern CfRSH5App theApp;
-extern CFrModInCndDlg* FrModInCndDlg;
+extern CFrModInCndDlg FrModInCndDlg;

@@ -17,7 +17,7 @@
 #define new DEBUG_NEW
 #endif
 
-CFrModInCndDlg* FrModInCndDlg=new CFrModInCndDlg();
+CFrModInCndDlg FrModInCndDlg;
 
 // CfRSH5App
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
@@ -28,29 +28,35 @@ CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 
 void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
-	int m_Npat = 60;
-	float m_dt = 1e-5;
+	m_Npat = 60;
+	m_dt = 1e-5;
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFrModInCndDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_Npat);
 	DDV_MinMaxInt(pDX, m_Npat, 2, 10000);
 	DDX_Text(pDX, IDC_EDIT2, m_dt);
 	DDV_MinMaxFloat(pDX, m_dt, 0, 1);
+
 }
 
 void CFrModInCndDlg::OnFrMod_InCnd()
 {
-	FrModInCndDlg->DoModal(); 
+	FrModInCndDlg.DoModal(); 
 }
 
 void CFrModInCndDlg::OnChangeEdit1()
 {
+	CString strNpat;
+	FrModInCndDlg.GetDlgItem(IDC_EDIT1)->GetWindowTextW(strNpat);
+	int m_Npat = _tstoi(strNpat);
 
 }
 
 void CFrModInCndDlg::OnChangeEdit2()
 {
-
+	CString strta;
+	FrModInCndDlg.GetDlgItem(IDC_EDIT2)->GetWindowTextW(strta);
+	double m_dt = _tstof(strta);
 }
 
 BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)
