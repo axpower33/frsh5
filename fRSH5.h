@@ -20,6 +20,7 @@ public:
 	float m_dt;
 	CFrModInCndDlg() noexcept;
 	void OnFrMod_InCnd();
+	BOOL OnInitDialog();
 
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FrModInCnd };

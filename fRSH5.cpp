@@ -26,6 +26,15 @@ CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 	float		m_dt = 1e-5;
 }
 
+BOOL CFrModInCndDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(TRUE);
+	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(FALSE);
+	return TRUE;
+}
+
 void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
 	m_Npat = 60;

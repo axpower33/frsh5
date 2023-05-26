@@ -77,8 +77,10 @@ void CfRSH5View::OnDraw(CDC* pDC)
 	HDC hdc = pDC->m_hDC;
 
 	FillRect(hdc, r, hbrush);
+	
 	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
 	{
+
 		if (pDoc->Pi->q > 0)
 		{
 
@@ -103,10 +105,6 @@ void CfRSH5View::OnDraw(CDC* pDC)
 			DeleteObject(holdb);
 		}
 	}
-	DeleteObject(r);
-	DeleteObject(hbrush);
-	DeleteObject(pDoc);
-	
 }
 
 
