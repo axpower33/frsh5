@@ -105,6 +105,9 @@ void CfRSH5View::OnDraw(CDC* pDC)
 			DeleteObject(holdb);
 		}
 	}
+	DeleteObject(r);
+	DeleteObject(hbrush);
+	DeleteObject(pDoc);
 }
 
 
