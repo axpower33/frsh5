@@ -80,31 +80,60 @@ void CfRSH5View::OnDraw(CDC* pDC)
 	
 	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
 	{
-
-		if (pDoc->Pi->q > 0)
+		if (FrModInCndDlg.m_rd == 0)
 		{
+			if (pDoc->Pi->q > 0)
+			{
 
-			HPEN redPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-			HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
-			Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-			DeleteObject(redPen);
-			DeleteObject(holdr);
+				HPEN redPen = CreatePen(PS_SOLID, 4, RGB(255, 0, 0));
+				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
+				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				DeleteObject(redPen);
+				DeleteObject(holdr);
+			}
+			else
+			{
+				HPEN bluePen = CreatePen(PS_SOLID, 4, RGB(0, 0, 255));
+				HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
+				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				DeleteObject(bluePen);
+				DeleteObject(holdb);
+			}
 		}
 		else
 		{
-			HPEN bluePen = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
-			HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
-			Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-				(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-			DeleteObject(bluePen);
-			DeleteObject(holdb);
+			if (pDoc->Pi->q > 0)
+			{
+
+				HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
+				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				DeleteObject(redPen);
+				DeleteObject(holdr);
+			}
+			else
+			{
+				HPEN bluePen = CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
+				HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
+				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				DeleteObject(bluePen);
+				DeleteObject(holdb);
+			}
 		}
 	}
+
 	DeleteObject(r);
 	DeleteObject(hbrush);
 	DeleteObject(pDoc);

@@ -18,6 +18,7 @@ class CFrModInCndDlg :public CDialogEx
 public:
 	int m_Npat;
 	float m_dt;
+	int m_rd;
 	CFrModInCndDlg() noexcept;
 	void OnFrMod_InCnd();
 	BOOL OnInitDialog();
@@ -27,11 +28,14 @@ public:
 #endif
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
+
 	// Реализация
 protected:
 
 	void OnChangeEdit1();
 	void OnChangeEdit2();
+	void OnBnClickedRadio1();
+	void OnBnClickedRadio2();
 	DECLARE_MESSAGE_MAP();
 
 };

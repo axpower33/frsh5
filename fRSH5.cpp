@@ -24,14 +24,16 @@ CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 {
 	int		    m_Npat = 60;
 	float		m_dt = 1e-5;
+	int m_rd = 0;
 }
 
 BOOL CFrModInCndDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(TRUE);
-	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(FALSE);
+	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
+	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(0);
+
 	return TRUE;
 }
 
@@ -39,13 +41,14 @@ void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
 	m_Npat = 60;
 	m_dt = 1e-5;
+	m_rd = 0;
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFrModInCndDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_Npat);
 	DDV_MinMaxInt(pDX, m_Npat, 2, 10000);
 	DDX_Text(pDX, IDC_EDIT2, m_dt);
 	DDV_MinMaxFloat(pDX, m_dt, 0, 1);
-
+	DDX_Radio(pDX, IDC_RADIO1, m_rd);
 }
 
 void CFrModInCndDlg::OnFrMod_InCnd()
@@ -68,11 +71,23 @@ void CFrModInCndDlg::OnChangeEdit2()
 	double m_dt = _tstof(strta);
 }
 
+void CFrModInCndDlg::OnBnClickedRadio1()
+{
+	UpdateData(true);
+	m_rd = 0;
+}
+void CFrModInCndDlg::OnBnClickedRadio2()
+{
+	UpdateData(true);
+	m_rd = 1;
+}
 BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)
 	//{{AFX_MSG_MAP(CFrModInCndDlg)
 	ON_EN_CHANGE(IDC_EDIT1, OnChangeEdit1)
 	ON_EN_CHANGE(IDC_EDIT2, OnChangeEdit2)
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_RADIO1, OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, OnBnClickedRadio2)
 END_MESSAGE_MAP()
 
 BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
