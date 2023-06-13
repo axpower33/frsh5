@@ -45,7 +45,7 @@ protected:
 
 #ifndef _DEBUG  // версия отладки в fRSH5View.cpp
 inline CfRSH5Doc* CfRSH5View::GetDocument() const
-   { return reinterpret_cast<CfRSH5Doc*>(m_pDocument); }
+   { return reinterpret_cast<CfRSH5Doc*>(m_pDocument); } 
 #endif
 
 

@@ -18,19 +18,21 @@
 #endif
 
 CFrModInCndDlg FrModInCndDlg;
-
+CChildFrame theChildWnd;
 // CfRSH5App
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 {
 	int		    m_Npat = 60;
-	float		m_dt = 1e-5;
+	float		m_dt = 8e-7;
 	int m_rd = 0;
 }
 
 BOOL CFrModInCndDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-
+	m_Npat = 60;
+	m_dt = 8e-7;
+	m_rd = 0;
 	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
 	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(0);
 
@@ -40,7 +42,7 @@ BOOL CFrModInCndDlg::OnInitDialog()
 void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
 	m_Npat = 60;
-	m_dt = 1e-5;
+	m_dt = 8e-7;
 	m_rd = 0;
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFrModInCndDlg)
@@ -76,11 +78,19 @@ void CFrModInCndDlg::OnBnClickedRadio1()
 	UpdateData(true);
 	m_rd = 0;
 }
+
 void CFrModInCndDlg::OnBnClickedRadio2()
 {
 	UpdateData(true);
 	m_rd = 1;
 }
+
+void CFrModInCndDlg::OnCancel()
+{
+	CFrModInCndDlg::OnInitDialog();
+	this->EndDialog(IDCANCEL);
+}
+
 BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)
 	//{{AFX_MSG_MAP(CFrModInCndDlg)
 	ON_EN_CHANGE(IDC_EDIT1, OnChangeEdit1)
@@ -88,6 +98,7 @@ BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_RADIO1, OnBnClickedRadio1)
 	ON_BN_CLICKED(IDC_RADIO2, OnBnClickedRadio2)
+	ON_BN_CLICKED(IDCANCEL, OnCancel)
 END_MESSAGE_MAP()
 
 BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
@@ -99,9 +110,6 @@ BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
 	// Стандартная команда настройки печати
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinAppEx::OnFilePrintSetup)
 END_MESSAGE_MAP()
-
-
-
 
 // Создание CfRSH5App
 
@@ -134,6 +142,7 @@ CfRSH5App theApp;
 
 
 // Инициализация CfRSH5App
+CObList m_templateList;
 
 BOOL CfRSH5App::InitInstance()
 {
@@ -188,12 +197,15 @@ BOOL CfRSH5App::InitInstance()
 	// Зарегистрируйте шаблоны документов приложения.  Шаблоны документов
 	//  выступают в роли посредника между документами, окнами рамок и представлениями
 	CMultiDocTemplate* pDocTemplate;
+
 	pDocTemplate = new CMultiDocTemplate(IDR_fRSH5TYPE,
 		RUNTIME_CLASS(CfRSH5Doc),
 		RUNTIME_CLASS(CChildFrame), // настраиваемая дочерняя рамка MDI
 		RUNTIME_CLASS(CfRSH5View));
 	if (!pDocTemplate)
 		return FALSE;
+	else
+		m_templateList.AddHead(pDocTemplate);
 	AddDocTemplate(pDocTemplate);
 
 	// создайте главное окно рамки MDI
@@ -301,4 +313,36 @@ void CfRSH5App::SaveCustomState()
 // Обработчики сообщений CfRSH5App
 
 
+BOOL CfRSH5App::OnIdle(LONG lCount)
+{
+	  CWinAppEx::OnIdle( lCount );
 
+	  int i = lCount;
+	  
+      while( i-- )
+	  {
+		 POSITION pos = m_templateList.GetHeadPosition();
+		 
+		 while (pos != NULL)
+		 {  CMultiDocTemplate* pTemplate = (CMultiDocTemplate*)m_templateList.GetNext(pos);
+
+			POSITION dPos = pTemplate->GetFirstDocPosition();
+			while( dPos != NULL )
+			{
+			   CDocument* doc = (CDocument*)pTemplate->GetNextDoc(dPos);
+			   doc->OnIdle();
+
+			   if( i ) continue;
+
+				  POSITION vPos = doc->GetFirstViewPosition();
+				  while( vPos != NULL )
+				  {
+					  CView* view = (CView*)doc->GetNextView( vPos );
+					  view->Invalidate( FALSE );
+					  view->UpdateWindow();
+				  }
+			}
+		}
+	}
+	return TRUE;
+}

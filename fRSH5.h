@@ -9,10 +9,6 @@
 
 #include "resource.h"       // основные символы
 
-
-// CfRSH5App:
-// Сведения о реализации этого класса: fRSH5.cpp
-//
 class CFrModInCndDlg :public CDialogEx
 {
 public:
@@ -36,16 +32,17 @@ protected:
 	void OnChangeEdit2();
 	void OnBnClickedRadio1();
 	void OnBnClickedRadio2();
+	void OnCancel();
 	DECLARE_MESSAGE_MAP();
-
 };
 
+// CfRSH5App:
+// Сведения о реализации этого класса: fRSH5.cpp
+//
 class CfRSH5App : public CWinAppEx
 {
 public:
 	CfRSH5App() noexcept;
-
-
 // Переопределение
 public:
 	virtual BOOL InitInstance();
@@ -54,7 +51,8 @@ public:
 // Реализация
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
-
+	
+	BOOL CfRSH5App::OnIdle(LONG lCount);
 	virtual void PreLoadState();
 	virtual void LoadCustomState();
 	virtual void SaveCustomState();

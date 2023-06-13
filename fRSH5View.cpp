@@ -84,7 +84,6 @@ void CfRSH5View::OnDraw(CDC* pDC)
 		{
 			if (pDoc->Pi->q > 0)
 			{
-
 				HPEN redPen = CreatePen(PS_SOLID, 4, RGB(255, 0, 0));
 				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
 				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),

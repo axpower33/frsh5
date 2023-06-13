@@ -58,7 +58,9 @@ CfRSH5Doc::CfRSH5Doc() noexcept
 
 CfRSH5Doc::~CfRSH5Doc()
 {
+
 }
+
 
 BOOL CfRSH5Doc::OnNewDocument()
 {
@@ -129,6 +131,7 @@ void CfRSH5Doc::Serialize(CArchive& ar)
 
 void CfRSH5Doc::OnIdle()
 {
+    //if (xx == 1)  xx = 0; else xx = 1;
     if (FirstPat->q) CulonForces();
 
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
@@ -140,17 +143,18 @@ void CfRSH5Doc::OnIdle()
     AgrForces();
     MovePart();
     t = t + dt;
+    //SetModifiedFlag(xx);
 
-    UpdateAllViews(NULL);
-    //InvalidateRect(NULL, NULL, false);
-    if (xx == 0)
-    {
-        mouse_event(MOUSEEVENTF_WHEEL, 100, 100, 1000, 1); xx = 1;
-    }
-    else 
-    {
-        mouse_event(MOUSEEVENTF_HWHEEL, 100, 100, 1000, 1); xx = 0;
-    }
+    //UpdateAllViews(NULL);
+    ////InvalidateRect(NULL, NULL, false);
+    //if (xx == 0)
+    //{
+    //    mouse_event(MOUSEEVENTF_WHEEL, 100, 100, 1000, 1); xx = 1;
+    //}
+    //else 
+    //{
+    //    mouse_event(MOUSEEVENTF_HWHEEL, 100, 100, 1000, 1); xx = 0;
+    //}
 }
     
         
