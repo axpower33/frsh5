@@ -18,21 +18,32 @@
 #endif
 
 CFrModInCndDlg FrModInCndDlg;
-CChildFrame theChildWnd;
+CString strta, strNpat;
 // CfRSH5App
+
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 {
-	int		    m_Npat = 60;
-	float		m_dt = 8e-7;
-	int m_rd = 0;
+	CDialogEx::CDialogEx();
+	m_Npat = 60;
+	m_dt = 2e-6;
+	m_rd = 0;
+
+}
+CFrModInCndDlg::~CFrModInCndDlg()
+{
+	CDialogEx::~CDialogEx();
 }
 
 BOOL CFrModInCndDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_Npat = 60;
-	m_dt = 8e-7;
+	_itot_s(m_Npat, strNpat.GetBufferSetLength(4), sizeof(&strNpat), 10);
+	//_wtof(ta, strta.GetBufferSetLength(10), sizeof(&strNpat),10);
+	strta.Format(_T("%lf"), m_dt);
+	FrModInCndDlg.GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
+	FrModInCndDlg.GetDlgItem(IDC_EDIT2)->SetWindowTextW((LPCTSTR)strta);
 	m_rd = 0;
+
 	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
 	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(0);
 
@@ -41,9 +52,6 @@ BOOL CFrModInCndDlg::OnInitDialog()
 
 void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 {
-	m_Npat = 60;
-	m_dt = 8e-7;
-	m_rd = 0;
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFrModInCndDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_Npat);
@@ -329,10 +337,10 @@ BOOL CfRSH5App::OnIdle(LONG lCount)
 			POSITION dPos = pTemplate->GetFirstDocPosition();
 			while( dPos != NULL )
 			{
-			   CDocument* doc = (CDocument*)pTemplate->GetNextDoc(dPos);
-			   doc->OnIdle();
+				  CDocument* doc = (CDocument*)pTemplate->GetNextDoc(dPos);
+				  doc->OnIdle();
 
-			   if( i ) continue;
+				  if( i ) continue;
 
 				  POSITION vPos = doc->GetFirstViewPosition();
 				  while( vPos != NULL )

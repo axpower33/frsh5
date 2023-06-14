@@ -16,6 +16,7 @@ public:
 	float m_dt;
 	int m_rd;
 	CFrModInCndDlg() noexcept;
+	~CFrModInCndDlg();
 	void OnFrMod_InCnd();
 	BOOL OnInitDialog();
 
