@@ -40,6 +40,7 @@ BOOL CFrModInCndDlg::OnInitDialog()
 	_itot_s(m_Npat, strNpat.GetBufferSetLength(4), sizeof(&strNpat), 10);
 	//_wtof(ta, strta.GetBufferSetLength(10), sizeof(&strNpat),10);
 	strta.Format(_T("%lf"), m_dt);
+
 	FrModInCndDlg.GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
 	FrModInCndDlg.GetDlgItem(IDC_EDIT2)->SetWindowTextW((LPCTSTR)strta);
 	m_rd = 0;
@@ -95,7 +96,9 @@ void CFrModInCndDlg::OnBnClickedRadio2()
 
 void CFrModInCndDlg::OnCancel()
 {
-	CFrModInCndDlg::OnInitDialog();
+	m_Npat = 60;
+	m_dt = 0.000002;
+	m_rd = 0;
 	this->EndDialog(IDCANCEL);
 }
 
