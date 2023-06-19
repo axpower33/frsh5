@@ -58,7 +58,7 @@ CfRSH5Doc::CfRSH5Doc() noexcept
 
 CfRSH5Doc::~CfRSH5Doc()
 {
-
+  
 }
 
 
@@ -131,6 +131,7 @@ void CfRSH5Doc::Serialize(CArchive& ar)
 
 void CfRSH5Doc::OnIdle()
 {
+    CDocument::OnIdle();
     if (xx == 1)  xx = 0; else xx = 1;
     if (FirstPat->q) CulonForces();
 

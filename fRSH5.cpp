@@ -38,16 +38,21 @@ BOOL CFrModInCndDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	_itot_s(m_Npat, strNpat.GetBufferSetLength(4), sizeof(&strNpat), 10);
-	//_wtof(ta, strta.GetBufferSetLength(10), sizeof(&strNpat),10);
 	strta.Format(_T("%lf"), m_dt);
 
 	FrModInCndDlg.GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
 	FrModInCndDlg.GetDlgItem(IDC_EDIT2)->SetWindowTextW((LPCTSTR)strta);
-	m_rd = 0;
-
-	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
-	((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(0);
-
+	//m_rd = 0;
+	if (m_rd == 0)
+	{
+		((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
+		((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(0);
+	}
+	else
+	{  
+		((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(0);
+		((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO2))->SetCheck(1);
+	}
 	return TRUE;
 }
 
@@ -82,23 +87,21 @@ void CFrModInCndDlg::OnChangeEdit2()
 	double m_dt = _tstof(strta);
 }
 
-void CFrModInCndDlg::OnBnClickedRadio1()
-{
-	UpdateData(true);
-	m_rd = 0;
-}
-
-void CFrModInCndDlg::OnBnClickedRadio2()
-{
-	UpdateData(true);
-	m_rd = 1;
-}
+//void CFrModInCndDlg::OnBnClickedRadio1()
+//{
+//	//UpdateData(true);
+//	m_rd = 0;
+//}
+//
+//void CFrModInCndDlg::OnBnClickedRadio2()
+//{
+//    //UpdateData(true);
+//	m_rd = 1;
+//}
 
 void CFrModInCndDlg::OnCancel()
 {
-	m_Npat = 60;
-	m_dt = 0.000002;
-	m_rd = 0;
+	this->OnInitDialog();
 	this->EndDialog(IDCANCEL);
 }
 
@@ -107,8 +110,8 @@ BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT1, OnChangeEdit1)
 	ON_EN_CHANGE(IDC_EDIT2, OnChangeEdit2)
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_RADIO1, OnBnClickedRadio1)
-	ON_BN_CLICKED(IDC_RADIO2, OnBnClickedRadio2)
+	//ON_BN_CLICKED(IDC_RADIO1, OnBnClickedRadio1)
+	//ON_BN_CLICKED(IDC_RADIO2, OnBnClickedRadio2)
 	ON_BN_CLICKED(IDCANCEL, OnCancel)
 END_MESSAGE_MAP()
 

@@ -31,9 +31,9 @@ protected:
 
 	void OnChangeEdit1();
 	void OnChangeEdit2();
-	void OnBnClickedRadio1();
+/*	void OnBnClickedRadio1();
 	void OnBnClickedRadio2();
-	void OnCancel();
+	*/void OnCancel();
 	DECLARE_MESSAGE_MAP();
 };
 
