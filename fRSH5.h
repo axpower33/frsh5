@@ -13,7 +13,7 @@ class CFrModInCndDlg :public CDialogEx
 {
 public:
 	int m_Npat;
-	float m_dt;
+	double m_dt;
 	int m_rd;
 	CFrModInCndDlg() noexcept;
 	~CFrModInCndDlg();
@@ -33,7 +33,8 @@ protected:
 	void OnChangeEdit2();
 /*	void OnBnClickedRadio1();
 	void OnBnClickedRadio2();
-	*/void OnCancel();
+	*/
+	void OnCancel();
 	DECLARE_MESSAGE_MAP();
 };
 

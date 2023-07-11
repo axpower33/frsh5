@@ -49,19 +49,6 @@ BOOL CfRSH5View::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-void CfRSH5View::Circle(float x, float y, float r, CDC* pDC, CfRSH5Doc* pDoc)
-{
-	pDC->Ellipse(round((x - r - pDoc->GetminX) * pDoc->rangeX),
-		round((pDoc->GetScY - (y - r) + pDoc->GetminY) * pDoc->rangeY),
-		round((x + r - pDoc->GetminX) * pDoc->rangeX),
-		round((pDoc->GetScY - (y + r) + pDoc->GetminY) * pDoc->rangeY));
-}
-
-void CfRSH5View::Line(float x1, float y1, float x2, float y2, CDC* pDC, CfRSH5Doc* pDoc)
-{
-	pDC->MoveTo(round((x1 - pDoc->GetminX) * pDoc->rangeX), round((pDoc->GetScY - y1 + pDoc->GetminY) * pDoc->rangeY));
-	pDC->LineTo(round((x2 - pDoc->GetminX) * pDoc->rangeX), round((pDoc->GetScY - y2 + pDoc->GetminY) * pDoc->rangeY));
-}
 
 void CfRSH5View::OnDraw(CDC* pDC)
 {
@@ -69,14 +56,13 @@ void CfRSH5View::OnDraw(CDC* pDC)
 	CfRSH5Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 
-	if (!pDoc)
-		return;
+	if (!pDoc) return;
 	CRect r;
 	GetClientRect(&r);
 	
 	HDC hdc = pDC->m_hDC;
 
-	FillRect(hdc, r, hbrush);
+    FillRect(hdc, r, hbrush);
 	
 	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
 	{
@@ -84,8 +70,8 @@ void CfRSH5View::OnDraw(CDC* pDC)
 		{
 			if (pDoc->Pi->q > 0)
 			{
-				HPEN redPen = CreatePen(PS_SOLID, 4, RGB(255, 0, 0));
-				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
+				HBRUSH redPen = CreateSolidBrush(RGB(255, 0, 0));
+				HBRUSH holdr = (HBRUSH)SelectObject(hdc, (HBRUSH)redPen);
 				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
 					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
 					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
@@ -93,10 +79,20 @@ void CfRSH5View::OnDraw(CDC* pDC)
 				DeleteObject(redPen);
 				DeleteObject(holdr);
 			}
-			else
+			else if (pDoc->Pi->q == 0)
 			{
-				HPEN bluePen = CreatePen(PS_SOLID, 4, RGB(0, 0, 255));
-				HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
+				HBRUSH magPen = CreateSolidBrush(RGB(255, 0, 255));
+				HBRUSH holdm = (HBRUSH)SelectObject(hdc, (HBRUSH)magPen);
+				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
+					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				DeleteObject(magPen);
+				DeleteObject(holdm);
+			}else
+			{
+				HBRUSH bluePen = CreateSolidBrush(RGB(0, 0, 255));
+				HBRUSH holdb = (HBRUSH)SelectObject(hdc, (HBRUSH)bluePen);
 				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
 					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
 					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
@@ -109,24 +105,24 @@ void CfRSH5View::OnDraw(CDC* pDC)
 		{
 			if (pDoc->Pi->q > 0)
 			{
-
 				HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
-				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
 				DeleteObject(redPen);
 				DeleteObject(holdr);
 			}
-			else
+			else if (pDoc->Pi->q == 0)
+			{
+				HPEN magPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 255));
+				HPEN holdm = (HPEN)SelectObject(hdc, (HPEN)magPen);
+				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
+				DeleteObject(magPen);
+				DeleteObject(holdm);
+			}else
 			{
 				HPEN bluePen = CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
 				HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
-				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
+				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
 				DeleteObject(bluePen);
 				DeleteObject(holdb);
 			}

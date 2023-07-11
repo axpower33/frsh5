@@ -18,9 +18,6 @@ protected:
 public:
 	virtual void OnDraw(CDC* pDC);  // переопределено для отрисовки этого представления
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void Circle(float x, float y, float r, CDC* pDC, CfRSH5Doc* pDoc);
-	virtual void Line(float x1, float y1, float x2, float y2, CDC* pDC, CfRSH5Doc* pDoc);
-
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
@@ -47,5 +44,4 @@ protected:
 inline CfRSH5Doc* CfRSH5View::GetDocument() const
    { return reinterpret_cast<CfRSH5Doc*>(m_pDocument); } 
 #endif
-
 

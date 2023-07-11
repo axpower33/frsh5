@@ -6,19 +6,19 @@
 
 struct RPoint
 {
-    float X;
-    float Y;
-    float Z;
+    double X;
+    double Y;
+    double Z;
 };
 struct  Particle
 {
-    float X, Y, Z;
-    float Vx, Vy, Vz;
-    float Fx, Fy, Fz;
-    float VanX, VanY, VanZ;
-    float mass;
-    float q;
-    float R;
+    double X, Y, Z;
+    double Vx, Vy, Vz;
+    double Fx, Fy, Fz;
+    double VanX, VanY, VanZ;
+    double mass;
+    double q;
+    double R;
     int   N;
     int   agr;
     bool  stop;
@@ -28,10 +28,10 @@ struct  Particle
 
 struct Agregat
 {
-    float X, Y, Z;
-    float Vx, Vy, Vz;
-    float Jx, Jy, Jz;
-    float Mx, My, Mz;
+    double X, Y, Z;
+    double Vx, Vy, Vz;
+    double Jx, Jy, Jz;
+    double Mx, My, Mz;
 };
 
 
@@ -98,17 +98,17 @@ protected:
     int NumPatInAgr();
 public:
     int N;
-    float dt;
-    float Rmax;
-    float Rmin;
-    float Rmid;
-    float Tmshft;
-    float DensAg;
+    double dt;
+    double Rmax;
+    double Rmin;
+    double Rmid;
+    double Tmshft;
+    double DensAg;
     int Tk;
-    int MaxQ;
-    float Xmax;
-    float Ymax;
-    float Zmax;
+    double MaxQ;
+    double Xmax;
+    double Ymax;
+    double Zmax;
     int xx;
     Particle* FirstPat;
     Particle* PNp;
@@ -117,18 +117,18 @@ public:
     Agregat CMass[150];
     int ConPat[150];
     int s;
-    float t;
+    double t;
     Particle* LastPat;
     Particle* TempP;
     Particle* Pi;
     Particle* Pj;
     bool needCharge;
-    float GetScX, GetScY;
-    float GetmaxX, GetmaxY;
-    float GetminX, GetminY;
-    float rangeX;
-    float rangeY;
-    float rangeR;
+    double GetScX, GetScY;
+    double GetmaxX, GetmaxY;
+    double GetminX, GetminY;
+    double rangeX;
+    double rangeY;
+    double rangeR;
     bool WorkShow;
 
     // Созданные функции схемы сообщений

@@ -42,7 +42,7 @@ BOOL CFrModInCndDlg::OnInitDialog()
 
 	FrModInCndDlg.GetDlgItem(IDC_EDIT1)->SetWindowTextW((LPCTSTR)strNpat);
 	FrModInCndDlg.GetDlgItem(IDC_EDIT2)->SetWindowTextW((LPCTSTR)strta);
-	//m_rd = 0;
+
 	if (m_rd == 0)
 	{
 		((CButton*)FrModInCndDlg.GetDlgItem(IDC_RADIO1))->SetCheck(1);
@@ -63,7 +63,7 @@ void CFrModInCndDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_Npat);
 	DDV_MinMaxInt(pDX, m_Npat, 2, 10000);
 	DDX_Text(pDX, IDC_EDIT2, m_dt);
-	DDV_MinMaxFloat(pDX, m_dt, 0, 1);
+	DDV_MinMaxFloat(pDX,(const float) m_dt, 0, 1);
 	DDX_Radio(pDX, IDC_RADIO1, m_rd);
 }
 
@@ -101,8 +101,8 @@ void CFrModInCndDlg::OnChangeEdit2()
 
 void CFrModInCndDlg::OnCancel()
 {
-	this->OnInitDialog();
-	this->EndDialog(IDCANCEL);
+	OnInitDialog();
+	EndDialog(IDCANCEL);
 }
 
 BEGIN_MESSAGE_MAP(CFrModInCndDlg, CDialogEx)

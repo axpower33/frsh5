@@ -27,12 +27,12 @@ BEGIN_MESSAGE_MAP(CfRSH5Doc, CDocument)
 END_MESSAGE_MAP()
 
 // Создание или уничтожение CCfRSH5Doc
-float M_PI = 3.14;
-float kk = 1.38E-23;
-float E0 = 8.854E-14;
+double M_PI = 3.14;
+double kk = 1.38E-23;
+double E0 = 8.854E-14;
 int E = 100;
-float C_SI = 1 / (4 * M_PI * E0 * E);
-float eQulon = 1.6E-19;
+double C_SI = 1 / (4 * M_PI * E0 * E);
+double eQulon = 1.6E-19;
 char getcd[128];
 int Xmax = 640;
 int Zmax = 640;
@@ -49,7 +49,7 @@ CfRSH5Doc::CfRSH5Doc() noexcept
     Rmax = 35e-7;
     Rmin = 25e-7;
     Rmid = 30e-7;
-    MaxQ = 27e-18;
+    MaxQ = 27e-19;
     Tmshft = 0.0001;
     DensAg = 10.5;
     Tk = 300;
@@ -138,7 +138,7 @@ void CfRSH5Doc::OnIdle()
     for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
         for (Pj = Pi->next; Pj != NULL; Pj = Pj->next)
         {
-            float dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
+            double dist_ij = pow(Pi->X - Pj->X, 2) + pow(Pi->Y - Pj->Y, 2) + pow(Pi->Z - Pj->Z, 2);
             if (dist_ij <= pow((5000000 * Pi->R + 5000000 * Pj->R), 2)) UnitPaticle(Pi, Pj);
         }
     AgrForces();
@@ -146,16 +146,17 @@ void CfRSH5Doc::OnIdle()
     t = t + dt;
     SetModifiedFlag(xx);
 
-    //UpdateAllViews(NULL);
-    ////InvalidateRect(NULL, NULL, false);
-    //if (xx == 0)
-    //{
-    //    mouse_event(MOUSEEVENTF_WHEEL, 100, 100, 1000, 1); xx = 1;
-    //}
-    //else 
-    //{
-    //    mouse_event(MOUSEEVENTF_HWHEEL, 100, 100, 1000, 1); xx = 0;
-    //}
+   /* InvalidateRect(NULL, NULL, false);
+    UpdateAllViews(NULL);
+    
+    if (xx == 0)
+    {
+        mouse_event(MOUSEEVENTF_WHEEL, 100, 100, 1000, 1); xx = 1;
+    }
+    else 
+    {
+        mouse_event(MOUSEEVENTF_HWHEEL, 100, 100, 1000, 1); xx = 0;
+    }*/
 }
     
         
@@ -282,7 +283,7 @@ void CfRSH5Doc::MxwDstr()
 
 void CfRSH5Doc::InitParticle()
 {
-    int TmPat[300];
+    double TmPat[300];
     int sign = 0;
     //double sq;// , alpha;
 
