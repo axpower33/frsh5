@@ -82,7 +82,6 @@ protected:
     void zeroDstr();
     void InitParticle();
     void InitAgr();
-    int sortOfZ(const void* a, const void* b);
     void CulonForces();
     bool IsPatInAgr(Particle* Pi, Particle* Pj);
     void MovePart();
@@ -130,6 +129,8 @@ public:
     double rangeY;
     double rangeR;
     bool WorkShow;
+    Particle* Mp[300];
+    double Dzx, Dzy;
 
     // Созданные функции схемы сообщений
 protected:

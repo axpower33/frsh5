@@ -49,6 +49,13 @@ BOOL CfRSH5View::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
+#define Pprt(a) (*(Particle**)a)
+int sortOfZ(const void* a, const void* b)
+{
+    if (Pprt(a)->Z > Pprt(b)->Z) return  1; else
+        if (Pprt(a)->Z < Pprt(b)->Z) return -1; else
+            return  0;
+}
 
 void CfRSH5View::OnDraw(CDC* pDC)
 {
@@ -64,70 +71,75 @@ void CfRSH5View::OnDraw(CDC* pDC)
 
     FillRect(hdc, r, hbrush);
 	
-	for (pDoc->Pi = pDoc->FirstPat; pDoc->Pi != NULL; pDoc->Pi = pDoc->Pi->next)
-	{
-		if (FrModInCndDlg.m_rd == 0)
-		{
-			if (pDoc->Pi->q > 0)
-			{
-				HBRUSH redPen = CreateSolidBrush(RGB(255, 0, 0));
-				HBRUSH holdr = (HBRUSH)SelectObject(hdc, (HBRUSH)redPen);
-				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-				DeleteObject(redPen);
-				DeleteObject(holdr);
-			}
-			else if (pDoc->Pi->q == 0)
-			{
-				HBRUSH magPen = CreateSolidBrush(RGB(255, 0, 255));
-				HBRUSH holdm = (HBRUSH)SelectObject(hdc, (HBRUSH)magPen);
-				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-				DeleteObject(magPen);
-				DeleteObject(holdm);
-			}else
-			{
-				HBRUSH bluePen = CreateSolidBrush(RGB(0, 0, 255));
-				HBRUSH holdb = (HBRUSH)SelectObject(hdc, (HBRUSH)bluePen);
-				Ellipse(hdc, (int)(pDoc->Pi->X - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y - 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->X + 5000000 * pDoc->Pi->R),
-					(int)(pDoc->Pi->Y + 5000000 * pDoc->Pi->R));
-				DeleteObject(bluePen);
-				DeleteObject(holdb);
-			}
-		}
-		else
-		{
-			if (pDoc->Pi->q > 0)
-			{
-				HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
-				HPEN holdr = (HPEN)SelectObject(hdc, (HPEN)redPen);
-				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
-				DeleteObject(redPen);
-				DeleteObject(holdr);
-			}
-			else if (pDoc->Pi->q == 0)
-			{
-				HPEN magPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 255));
-				HPEN holdm = (HPEN)SelectObject(hdc, (HPEN)magPen);
-				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
-				DeleteObject(magPen);
-				DeleteObject(holdm);
-			}else
-			{
-				HPEN bluePen = CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
-				HPEN holdb = (HPEN)SelectObject(hdc, (HPEN)bluePen);
-				Arc(hdc, (int)(pDoc->Pi->X), (int)(pDoc->Pi->Y), (int)(pDoc->Pi->X + 10000000 * pDoc->Pi->R), (int)(pDoc->Pi->Y + 10000000 * pDoc->Pi->R), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2), (int)((pDoc->Pi->X) / 2), (int)((pDoc->Pi->Y + 10000000 * pDoc->Pi->R) / 2));
-				DeleteObject(bluePen);
-				DeleteObject(holdb);
-			}
-		}
-	}
+    int i;
+    
+    for (i = 0, pDoc->Pi = pDoc->FirstPat; (pDoc->Mp[i++] = pDoc->Pi, pDoc->Pi = pDoc->Pi->next); );
+    qsort(pDoc->Mp, pDoc->N, sizeof(Particle*), &sortOfZ);
+    
+    for (i = 0; i < pDoc->N; i++)
+    {
+        if (FrModInCndDlg.m_rd==1)
+        {  
+            if (pDoc->Mp[i]->q == 0)
+            {
+                HPEN hNPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 255));
+                HPEN hOPen = (HPEN)SelectObject(hdc, hNPen);
+                Arc(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R) / 2), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y+ 10000000 * pDoc->Mp[i]->R) / 2));
+                DeleteObject(hNPen);
+                DeleteObject(hOPen);
+            }
+            else
+                if (pDoc->Mp[i]->q > 0)
+                {
+                    HPEN hNPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+                    HPEN hOPen = (HPEN)SelectObject(hdc, hNPen);
+                    Arc(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R) / 2), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R) / 2));
+                    DeleteObject(hNPen);
+                    DeleteObject(hOPen);
+                }
+                else
+                    if (pDoc->Mp[i]->q < 0)
+                    {
+                        HPEN hNPen = CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
+                        HPEN hOPen = (HPEN)SelectObject(hdc, hNPen);
+                        Arc(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R) / 2), (int)((pDoc->Mp[i]->X) / 2), (int)((pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R) / 2));
+                        DeleteObject(hNPen);
+                        DeleteObject(hOPen);
+                    }
+
+        }
+        else
+        {
+            HBRUSH hbrush, hbrushOld;
+            if (pDoc->Mp[i]->q == 0)
+            {
+                hbrush = CreateSolidBrush(RGB(255, 0, 255));
+                hbrushOld = (HBRUSH)SelectObject(hdc, hbrush);
+                Ellipse(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R));
+                DeleteObject(hbrush);
+                DeleteObject(hbrushOld);
+            }
+            else
+                if (pDoc->Mp[i]->q > 0)
+                {
+                    hbrush = CreateSolidBrush(RGB(255, 0, 0));
+                    hbrushOld = (HBRUSH)SelectObject(hdc, hbrush);
+                    Ellipse(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R));
+                    DeleteObject(hbrush);
+                    DeleteObject(hbrushOld);
+                }
+                else
+                    if (pDoc->Mp[i]->q < 0)
+                    {
+                        hbrush = CreateSolidBrush(RGB(0, 0, 255));
+                        hbrushOld = (HBRUSH)SelectObject(hdc, hbrush);
+                        Ellipse(hdc, (int)(pDoc->Mp[i]->X), (int)(pDoc->Mp[i]->Y), (int)(pDoc->Mp[i]->X + 10000000 * pDoc->Mp[i]->R), (int)(pDoc->Mp[i]->Y + 10000000 * pDoc->Mp[i]->R));
+                        DeleteObject(hbrush);
+                        DeleteObject(hbrushOld);
+                    }
+            }
+
+        }
 
 	DeleteObject(r);
 	DeleteObject(hbrush);

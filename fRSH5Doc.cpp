@@ -315,7 +315,6 @@ void CfRSH5Doc::InitParticle()
         Pi->Fz = 0;
     }
     MxwDstr();
-    
 }
 
 void CfRSH5Doc::InitAgr()
@@ -362,14 +361,6 @@ void CfRSH5Doc::CulonForces()
         //double U=Pi->Fx*dX+Pi->Fy*dY+Pi->Fz*dZ;
         //double Ek=Pi->mass*(pow(Pi->Vx,2)+pow(Pi->Vy,2)+pow(Pi->Vz,2))/2;
     }
-}
-
-#define Pprt(a) (*(Particle**)a)
-int CfRSH5Doc::sortOfZ(const void* a, const void* b)
-{
-    if (Pprt(a)->Z > Pprt(b)->Z) return  1; else
-        if (Pprt(a)->Z < Pprt(b)->Z) return -1; else
-            return  0;
 }
 
 
