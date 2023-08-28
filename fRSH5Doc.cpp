@@ -130,21 +130,16 @@ void CfRSH5Doc::Serialize(CArchive& ar)
             String^ SqlString = "DELETE FROM FRSP";
             SqlCommand^ DaUpdateCommand = gcnew SqlCommand(SqlString, cn);
             DaUpdateCommand->ExecuteNonQuery();
-           
-           double PiX, PiY, PiZ;
-           // Define ADODB object pointers.  
+            // Define ADODB object pointers.  
            for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
            {
-               PiX = (float)Pi->X;
-               PiY = (float)Pi->Y;
-               PiZ = (float)Pi->Z;
-               String^ SqlString2 = "INSERT INTO FRSP (X, Y, Z) VALUES (@PiX, @PiY, @PiZ)";
-               SqlCommand^ DaUpdateCom = gcnew SqlCommand(SqlString2, cn);
-               DaUpdateCom->Parameters->AddWithValue("@PiX", PiX);
-               DaUpdateCom->Parameters->AddWithValue("@PiY", PiY);
-               DaUpdateCom->Parameters->AddWithValue("@PiZ", PiZ);
+               SqlString = "INSERT INTO FRSP (X, Y, Z) VALUES (@PiX, @PiY, @PiZ)";
+               DaUpdateCommand = gcnew SqlCommand(SqlString, cn);
+               DaUpdateCommand->Parameters->AddWithValue("@PiX", Pi->X);
+               DaUpdateCommand->Parameters->AddWithValue("@PiY", Pi->Y);
+               DaUpdateCommand->Parameters->AddWithValue("@PiZ", Pi->Z);
 
-               DaUpdateCom->ExecuteNonQuery();
+               DaUpdateCommand->ExecuteNonQuery();
            }
            // Close the database
            cn->Close();

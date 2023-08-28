@@ -17,6 +17,14 @@
 #define new DEBUG_NEW
 #endif
 
+#using <mscorlib.dll>
+#using <System.dll>
+#using <System.Windows.Forms.dll>
+
+using namespace System;
+using namespace System::Windows;
+using namespace System::Windows::Forms;
+
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 // CfRSH5App
@@ -139,7 +147,7 @@ CfRSH5App::CfRSH5App() noexcept
 	// Если приложение построено с поддержкой среды Common Language Runtime (/clr):
 	//     1) Этот дополнительный параметр требуется для правильной поддержки работы диспетчера перезагрузки.
 	//   2) В своем проекте для сборки необходимо добавить ссылку на System.Windows.Forms.
-	//System::Windows::Forms::Application::SetUnhandledExceptionMode(System::Windows::Forms::UnhandledExceptionMode::ThrowException);
+	System::Windows::Forms::Application::SetUnhandledExceptionMode(System::Windows::Forms::UnhandledExceptionMode::ThrowException);
 #endif
 
 	// TODO: замените ниже строку идентификатора приложения строкой уникального идентификатора; рекомендуемый
