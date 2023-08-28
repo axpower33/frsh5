@@ -1,7 +1,6 @@
 ﻿
 // CfRSH5Doc.cpp: реализация класса CCfRSH5Doc 
 //
-
 #include "pch.h"
 #include "framework.h"
 #include "frsh5View.h"
@@ -13,7 +12,25 @@
 
 #include "fRSH5Doc.h"
 
-#include <propkey.h>
+#include "afxdb.h"
+
+//#include <propkey.h>
+//#include "odbcinst.h"
+//#include <sqlext.h>
+//#include <sqltypes.h>
+//#include <sql.h>
+
+//#include "stdafx.h"
+
+#using <mscorlib.dll>
+#using <System.dll>
+#using <System.Data.dll>
+#using <System.Xml.dll>
+
+using namespace System;
+using namespace System::Data;
+using namespace System::Data::SqlClient;
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -104,7 +121,41 @@ void CfRSH5Doc::Serialize(CArchive& ar)
         ar.Write(Pagregat, (N / 2 + 1) * sizeof(*Pagregat));
         ar.Write(ConPat, (N + 1) * sizeof(*ConPat));
         ar.Write(&s, sizeof(s));
-        // TODO: добавьте код сохранения
+
+        TRY{
+           // Open the database
+            String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 30";
+            SqlConnection^ cn = gcnew SqlConnection(pStr);
+            cn->Open();
+            String^ SqlString = "DELETE FROM FRSP";
+            SqlCommand^ DaUpdateCommand = gcnew SqlCommand(SqlString, cn);
+            DaUpdateCommand->ExecuteNonQuery();
+           
+           double PiX, PiY, PiZ;
+           // Define ADODB object pointers.  
+           for (Pi = FirstPat; Pi != NULL; Pi = Pi->next)
+           {
+               PiX = (float)Pi->X;
+               PiY = (float)Pi->Y;
+               PiZ = (float)Pi->Z;
+               String^ SqlString2 = "INSERT INTO FRSP (X, Y, Z) VALUES (@PiX, @PiY, @PiZ)";
+               SqlCommand^ DaUpdateCom = gcnew SqlCommand(SqlString2, cn);
+               DaUpdateCom->Parameters->AddWithValue("@PiX", PiX);
+               DaUpdateCom->Parameters->AddWithValue("@PiY", PiY);
+               DaUpdateCom->Parameters->AddWithValue("@PiZ", PiZ);
+
+               DaUpdateCom->ExecuteNonQuery();
+           }
+           // Close the database
+           cn->Close();
+
+       }CATCH(CDBException, e) {
+           // If a database exception occured, show error msg
+           AfxMessageBox(L"Database error: " + e->m_strError);
+       }
+       END_CATCH;
+       // TODO: добавьте код сохранения
+
     }
     else
     {
