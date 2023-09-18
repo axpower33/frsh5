@@ -24,6 +24,8 @@
     <Keyword>MFCProj</Keyword>
     <RootNamespace>fRSH5</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <TargetFrameworkVersion>
+    </TargetFrameworkVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -198,6 +200,8 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="rowcursor.h" />
+    <ClInclude Include="StdAfx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ViewTree.h" />
   </ItemGroup>
@@ -217,6 +221,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PropertiesWnd.cpp" />
+    <ClCompile Include="rowcursor.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="ViewTree.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +256,10 @@
     <Image Include="res\userimages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Report1.rpt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="res\fRSH5.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,6 +8,54 @@
 #endif
 
 #include "resource.h"       // основные символы
+#if !defined(AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_)
+#define AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_
+
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
+/////////////////////////////////////////////////////////////////////////////
+// CDisplay_CrystalrptDlg dialog
+
+class CDisplay_CrystalrptDlg : public CDialogEx
+{
+	// Construction
+public:
+	CDisplay_CrystalrptDlg() noexcept;
+	// standard constructor
+
+// Dialog Data
+	//{{AFX_DATA(CDisplay_CrystalrptDlg)
+	enum { IDD = IDD_DIALOG4 };
+	CString	m_StudentName;
+	//}}AFX_DATA
+	void OnCrystalDlg();
+	afx_msg void OnDisplay1();
+	//afx_msg void OnDisplay2();
+	BOOL OnInitDialog();
+	afx_msg void OnPaint();
+	afx_msg HCURSOR OnQueryDragIcon();
+
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CDisplay_CrystalrptDlg)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	//}}AFX_VIRTUAL
+// Implementation
+protected:
+	HICON m_hIcon;
+
+	// Generated message map functions
+	//{{AFX_MSG(CDisplay_CrystalrptDlg)
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+};
+
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+
+#endif // !defined(AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_)
 
 class CFrModInCndDlg :public CDialogEx
 {
@@ -49,7 +97,7 @@ public:
 public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
-
+	
 // Реализация
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
@@ -63,5 +111,6 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
+extern CDisplay_CrystalrptDlg CrystalrptDlg;
 extern CfRSH5App theApp;
 extern CFrModInCndDlg FrModInCndDlg;

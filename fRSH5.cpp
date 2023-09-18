@@ -8,10 +8,12 @@
 #include "afxdialogex.h"
 #include "fRSH5.h"
 #include "MainFrm.h"
+#include "stdafx.h"
 
 #include "ChildFrm.h"
 #include "fRSH5Doc.h"
 #include "fRSH5View.h"
+//#include "crystalctrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +29,181 @@ using namespace System::Windows::Forms;
 
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
+CDisplay_CrystalrptDlg CrystalrptDlg;
 // CfRSH5App
+
+/////////////////////////////////////////////////////////////////////////////
+// CDisplay_CrystalrptDlg dialog
+
+BEGIN_MESSAGE_MAP(CDisplay_CrystalrptDlg, CDialog)
+	//{{AFX_MSG_MAP(CDisplay_CrystalrptDlg)
+	
+ON_WM_PAINT()
+	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
+	//ON_BN_CLICKED(IDC_DISPLAY2, OnDisplay2)
+
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG4)
+{
+	CDialogEx::CDialogEx();
+	////{{AFX_DATA_INIT(CDisplay_CrystalrptDlg)
+	////}}AFX_DATA_INIT
+	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+void CDisplay_CrystalrptDlg::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(CDisplay_CrystalrptDlg)
+	
+	//DDX_Text(pDX, IDC_EDIT1, m_StudentName);
+	
+	//}}AFX_DATA_MAP
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CDisplay_CrystalrptDlg message handlers
+
+BOOL CDisplay_CrystalrptDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// Add "About..." menu item to system menu.
+
+	// IDM_ABOUTBOX must be in the system command range.
+	
+	// TODO: Add extra initialization here
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+
+// If you add a minimize button to your dialog, you will need the code below
+//  to draw the icon.  For MFC applications using the document/view model,
+//  this is automatically done for you by the framework.
+
+void CDisplay_CrystalrptDlg::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{
+		CDialog::OnPaint();
+	}
+}
+
+// The system calls this to obtain the cursor to display while the user drags
+//  the minimized window.
+HCURSOR CDisplay_CrystalrptDlg::OnQueryDragIcon()
+{
+	return (HCURSOR)m_hIcon;
+}
+
+void CDisplay_CrystalrptDlg::OnCrystalDlg()
+{
+	CrystalrptDlg.DoModal();
+}
+
+void CDisplay_CrystalrptDlg::OnDisplay1()
+{
+	CWnd* m_cryscontrol = (CWnd*)(GetDlgItem(IDC_CRVIEWER1));
+	CString str;
+	str = "";  // where Table1 and Name is a name and a field in your Database
+
+	static BYTE parms[] =
+		VTS_BSTR;
+	LPCSTR lpszNewValue = (LPCSTR)"Report1.rpt";
+	m_cryscontrol->InvokeHelper(0x3, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+		lpszNewValue);
+
+	//m_cryscontrol->SetReportFileName(L"Report1.rpt");
+	static BYTE parms2[] =
+		VTS_BSTR;
+
+	lpszNewValue = (LPCSTR)"";
+	
+	m_cryscontrol->InvokeHelper(0xd, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms2,
+		lpszNewValue);
+
+	//m_cryscontrol->SetSelectionFormula(str);
+	
+	static BYTE parms3[] =
+		VTS_BOOL;
+	BOOL bNewValue = TRUE;
+	m_cryscontrol->InvokeHelper(0x22, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms3,
+		bNewValue);
+
+	//m_cryscontrol->SetDiscardSavedData(TRUE);
+	BOOL nNewValue = TRUE;
+	static BYTE parms4[] =
+		VTS_I2;
+	m_cryscontrol->InvokeHelper(0x11, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms4,
+		nNewValue);
+	
+	m_cryscontrol->UpdateData(FALSE);
+
+	//m_cryscontrol->SetAction(TRUE);
+
+}
+
+//void CDisplay_CrystalrptDlg::OnDisplay2()
+//{
+//	CWnd* m_cryscontrol = (CWnd*)(GetDlgItem(IDC_CRVIEWER1));
+//	CString str;
+//	str = "";  // where Table1 and Name is a name and a field in your Database
+//
+//	static BYTE parms[] =
+//		VTS_BSTR;
+//	LPCSTR lpszNewValue = (LPCSTR)"Report1.rpt";
+//	m_cryscontrol->InvokeHelper(0x3, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
+//		lpszNewValue);
+//
+//	//m_cryscontrol->SetReportFileName(L"Report1.rpt");
+//	static BYTE parms2[] =
+//		VTS_BSTR;
+//
+//	lpszNewValue = (LPCSTR)"";
+//
+//	m_cryscontrol->InvokeHelper(0xd, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms2,
+//		lpszNewValue);
+//
+//	//m_cryscontrol->SetSelectionFormula(str);
+//	static BYTE parms3[] =
+//		VTS_BOOL;
+//	BOOL bNewValue = TRUE;
+//	InvokeHelper(0x22, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms3,
+//		bNewValue);
+//
+//	//m_cryscontrol->SetDiscardSavedData(TRUE);
+//	BOOL nNewValue = TRUE;
+//	static BYTE parms4[] =
+//		VTS_I2;
+//	InvokeHelper(0x11, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms4,
+//		nNewValue);
+//
+//	//m_cryscontrol->SetAction(TRUE);
+//	m_cryscontrol->UpdateData(FALSE);
+//}
 
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
 {
@@ -127,6 +303,7 @@ BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CfRSH5App::OnAppAbout)
 	// Стандартные команды по работе с файлами документов
 	ON_COMMAND(ID_FrMod_InCnd, &CFrModInCndDlg::OnFrMod_InCnd)
+	ON_COMMAND(IDD_DIALOG4, &CDisplay_CrystalrptDlg::OnCrystalDlg)
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 	// Стандартная команда настройки печати
