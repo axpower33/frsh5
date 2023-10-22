@@ -7,14 +7,28 @@
 	#error "включить pch.h до включения этого файла в PCH"
 #endif
 
-#include "resource.h"       // основные символы
-#if !defined(AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_)
-#define AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#include "Resource.h"
 
+#include "CACTIVEXREPORTVIEWER1.h"
+#using <mscorlib.dll>
+#using <System.dll>
+#using <System.Windows.Forms.dll>
+#using <CrystalDecisions.CrystalReports.Engine.dll>
+#using <CrystalDecisions.Windows.Forms.dll>
+#using <System.Data.dll>
+#using <System.Xml.dll>
+
+using namespace System::Data::SqlClient;
+using namespace System;
+using namespace System::Data;
+using namespace System::Windows;
+using namespace System::Windows::Forms;
+using namespace CrystalDecisions::CrystalReports::Engine;
+using namespace System::Data::SqlTypes;
+using namespace CrystalDecisions::Windows::Forms;
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
 
@@ -22,21 +36,19 @@ class CDisplay_CrystalrptDlg : public CDialogEx
 {
 	// Construction
 public:
+	DECLARE_DYNAMIC(CDisplay_CrystalrptDlg)
 	CDisplay_CrystalrptDlg() noexcept;
 	// standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CDisplay_CrystalrptDlg)
 	enum { IDD = IDD_DIALOG4 };
-	CString	m_StudentName;
 	//}}AFX_DATA
 	void OnCrystalDlg();
-	afx_msg void OnDisplay1();
-	//afx_msg void OnDisplay2();
+	//afx_msg void OnDisplay1();
 	BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDisplay_CrystalrptDlg)
 protected:
@@ -45,17 +57,16 @@ protected:
 // Implementation
 protected:
 	HICON m_hIcon;
-
+	
 	// Generated message map functions
 	//{{AFX_MSG(CDisplay_CrystalrptDlg)
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	//CrystalReportViewer1 ReportViewer1;
+	CACTIVEXREPORTVIEWER1 mCR_View1;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_DISPLAY_CRYSTALRPTDLG_H__19B1EC89_FCE0_42D0_898F_F64A299D20AF__INCLUDED_)
 
 class CFrModInCndDlg :public CDialogEx
 {

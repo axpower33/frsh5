@@ -24,8 +24,8 @@
     <Keyword>MFCProj</Keyword>
     <RootNamespace>fRSH5</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFrameworkVersion>
-    </TargetFrameworkVersion>
+    <TargetFramework>4.7.2</TargetFramework>
+    <TargetFrameworkVersion>4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,6 +79,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <PublicIncludeDirectories>C:\Users\axpower\Source\Repos\fRSH5\packages\CrystalDecisions.CrystalReports.Engine.1.0.0\lib;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <AllProjectBMIsArePublic>true</AllProjectBMIsArePublic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -96,8 +98,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalUsingDirectories>C:\Users\axpower\Source\Repos\fRSH5\fRSH5;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\axpower\Source\Repos\fRSH5\fRSH5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>C:\Users\axpower\Source\Repos\fRSH5\packages\CrystalDecisions.CrystalReports.Engine.1.0.0\lib;C:\Users\axpower\Source\Repos\fRSH5\fRSH5;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>C:\Users\axpower\Source\Repos\fRSH5\packages\CrystalDecisions.CrystalReports.Engine.1.0.0\lib;C:\Users\axpower\Source\Repos\fRSH5\fRSH5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,6 +190,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CACTIVEXREPORTVIEWER1.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="ViewTree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CACTIVEXREPORTVIEWER1.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
@@ -256,10 +260,27 @@
     <Image Include="res\userimages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CrystalDecisions.CrystalReports.Engine.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.ClientDoc.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.CommLayer.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.CommonControls.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.CommonObjectModel.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.Controllers.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.CubeDefModel.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.DataDefModel.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.DataSetConversion.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.ObjectFactory.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.Prompting.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.ReportDefModel.dll" />
+    <None Include="CrystalDecisions.ReportAppServer.XmlSerialize.dll" />
+    <None Include="CrystalDecisions.ReportSource.dll" />
+    <None Include="CrystalDecisions.Shared.dll" />
+    <None Include="CrystalDecisions.Windows.Forms.dll" />
     <None Include="packages.config" />
-    <None Include="Report1.rpt">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
+    <Xml Include="Report2.rpt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </Xml>
     <None Include="res\fRSH5.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

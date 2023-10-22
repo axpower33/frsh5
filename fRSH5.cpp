@@ -10,11 +10,11 @@
 #include "MainFrm.h"
 #include "stdafx.h"
 
+#include "afxdb.h"
 #include "ChildFrm.h"
 #include "fRSH5Doc.h"
 #include "fRSH5View.h"
-//#include "crystalctrl.h"
-
+#include "fRSH5.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -22,27 +22,37 @@
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Windows.Forms.dll>
+#using <CrystalDecisions.CrystalReports.Engine.dll>
+#using <CrystalDecisions.Windows.Forms.dll>
+#using <System.Data.dll>
+#using <System.Xml.dll>
 
+using namespace System::Data::SqlClient;
 using namespace System;
+using namespace System::Data;
 using namespace System::Windows;
 using namespace System::Windows::Forms;
+using namespace CrystalDecisions::CrystalReports::Engine;
+using namespace System::Data::SqlTypes;
+using namespace CrystalDecisions::Windows::Forms;
 
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 CDisplay_CrystalrptDlg CrystalrptDlg;
+
 // CfRSH5App
 
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
+IMPLEMENT_DYNAMIC(CDisplay_CrystalrptDlg, CDialogEx);
 
-BEGIN_MESSAGE_MAP(CDisplay_CrystalrptDlg, CDialog)
+BEGIN_MESSAGE_MAP(CDisplay_CrystalrptDlg, CDialogEx)
 	//{{AFX_MSG_MAP(CDisplay_CrystalrptDlg)
 	
 ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
-	//ON_BN_CLICKED(IDC_DISPLAY2, OnDisplay2)
-
+	//ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
+	ON_WM_SHOWWINDOW()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -55,33 +65,16 @@ CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG
 	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+
 void CDisplay_CrystalrptDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CDisplay_CrystalrptDlg)
-	
-	//DDX_Text(pDX, IDC_EDIT1, m_StudentName);
-	
-	//}}AFX_DATA_MAP
+	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCR_View1);
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg message handlers
-
-BOOL CDisplay_CrystalrptDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	// Add "About..." menu item to system menu.
-
-	// IDM_ABOUTBOX must be in the system command range.
-	
-	// TODO: Add extra initialization here
-
-	return TRUE;  // return TRUE  unless you set the focus to a control
-}
-
 
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
@@ -119,90 +112,33 @@ HCURSOR CDisplay_CrystalrptDlg::OnQueryDragIcon()
 	return (HCURSOR)m_hIcon;
 }
 
+
+BOOL CDisplay_CrystalrptDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	
+	return TRUE;
+}
+
 void CDisplay_CrystalrptDlg::OnCrystalDlg()
 {
 	CrystalrptDlg.DoModal();
 }
 
-void CDisplay_CrystalrptDlg::OnDisplay1()
-{
-	CWnd* m_cryscontrol = (CWnd*)(GetDlgItem(IDC_CRVIEWER1));
-	CString str;
-	str = "";  // where Table1 and Name is a name and a field in your Database
-
-	static BYTE parms[] =
-		VTS_BSTR;
-	LPCSTR lpszNewValue = (LPCSTR)"Report1.rpt";
-	m_cryscontrol->InvokeHelper(0x3, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
-		lpszNewValue);
-
-	//m_cryscontrol->SetReportFileName(L"Report1.rpt");
-	static BYTE parms2[] =
-		VTS_BSTR;
-
-	lpszNewValue = (LPCSTR)"";
-	
-	m_cryscontrol->InvokeHelper(0xd, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms2,
-		lpszNewValue);
-
-	//m_cryscontrol->SetSelectionFormula(str);
-	
-	static BYTE parms3[] =
-		VTS_BOOL;
-	BOOL bNewValue = TRUE;
-	m_cryscontrol->InvokeHelper(0x22, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms3,
-		bNewValue);
-
-	//m_cryscontrol->SetDiscardSavedData(TRUE);
-	BOOL nNewValue = TRUE;
-	static BYTE parms4[] =
-		VTS_I2;
-	m_cryscontrol->InvokeHelper(0x11, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms4,
-		nNewValue);
-	
-	m_cryscontrol->UpdateData(FALSE);
-
-	//m_cryscontrol->SetAction(TRUE);
-
-}
-
-//void CDisplay_CrystalrptDlg::OnDisplay2()
+//void CDisplay_CrystalrptDlg::OnDisplay1()
 //{
-//	CWnd* m_cryscontrol = (CWnd*)(GetDlgItem(IDC_CRVIEWER1));
+//	
+//	ACTIVEXREPORTVIEWER1* m_cryscontrol = (ACTIVEXREPORTVIEWER1*)(GetDlgItem(IDC_ACTIVEXREPORTVIEWER1));
 //	CString str;
 //	str = "";  // where Table1 and Name is a name and a field in your Database
 //
-//	static BYTE parms[] =
-//		VTS_BSTR;
-//	LPCSTR lpszNewValue = (LPCSTR)"Report1.rpt";
-//	m_cryscontrol->InvokeHelper(0x3, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms,
-//		lpszNewValue);
 //
-//	//m_cryscontrol->SetReportFileName(L"Report1.rpt");
-//	static BYTE parms2[] =
-//		VTS_BSTR;
+//	m_cryscontrol->put_ReportSource((LPUNKNOWN)"Report1.rpt");
+//	m_cryscontrol->ViewReport();
 //
-//	lpszNewValue = (LPCSTR)"";
-//
-//	m_cryscontrol->InvokeHelper(0xd, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms2,
-//		lpszNewValue);
-//
-//	//m_cryscontrol->SetSelectionFormula(str);
-//	static BYTE parms3[] =
-//		VTS_BOOL;
-//	BOOL bNewValue = TRUE;
-//	InvokeHelper(0x22, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms3,
-//		bNewValue);
-//
-//	//m_cryscontrol->SetDiscardSavedData(TRUE);
-//	BOOL nNewValue = TRUE;
-//	static BYTE parms4[] =
-//		VTS_I2;
-//	InvokeHelper(0x11, DISPATCH_PROPERTYPUT, VT_EMPTY, NULL, parms4,
-//		nNewValue);
-//
-//	//m_cryscontrol->SetAction(TRUE);
 //	m_cryscontrol->UpdateData(FALSE);
+//
 //}
 
 CFrModInCndDlg::CFrModInCndDlg() noexcept : CDialogEx(IDD_FrModInCnd)
@@ -544,4 +480,51 @@ BOOL CfRSH5App::OnIdle(LONG lCount)
 		}
 	}
 	return TRUE;
+}
+
+const CLSID CLSID_Application = { 0xb4741fd0, 0x45a6, 0x11d1, {0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91} };
+const IID IID_IApplication = { 0x0bac5cf2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+const CLSID CLSID_ReportObjects = { 0xb4741e60, 0x45a6, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+const IID IID_IReportObjects = { 0x0bac59b2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+
+void CDisplay_CrystalrptDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+
+	CDialogEx::OnShowWindow(bShow, nStatus);
+	try {
+		//HRESULT hr = S_OK;
+		//hr = CoCreateInstance(CLSID_Application, NULL, CLSCTX_INPROC_SERVER, IID_IDispatch, (void**)&theApp);
+		
+		 //Open the database
+		String ^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
+		SqlConnection^ cn = gcnew SqlConnection(pStr);
+		cn->Open();
+		String^ SqlString = "SELECT X,Y,Z FROM FRSP";
+		DataSet^ ds = gcnew DataSet();
+		SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString,cn);
+			 
+		da->Fill(ds);
+		DataTable^ dt = ds->Tables[0];
+		// Define ADODB object pointers.  
+	    // Close the database
+		cn->Close();
+
+		ReportDocument^ pRep = gcnew ReportDocument();
+		CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
+		
+		pRep->Load("Report2.rpt");
+		pRep->SetDataSource(dt);
+	//	mCR_View1.put_ReportSource(pRep);
+		//mCR_View1.ViewReport();
+		pReportViewer1->ReportSource = pRep;
+		pReportViewer1->Refresh();
+	}
+	catch (const _com_error& e) {
+		_bstr_t bstrSource(e.Source());
+		_bstr_t bstrDescription(e.Description());
+		CString strError;
+		strError = L"Привет222";
+		AfxMessageBox(strError);
+	}
+ // TODO: добавьте свой код обработчика сообщений
 }

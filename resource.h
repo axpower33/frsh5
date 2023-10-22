@@ -98,6 +98,11 @@
 #define IDC_DISPLAY1                    1034
 #define IDC_DISPLAY2                    1035
 #define IDC_CRVIEWER1                   1038
+#define IDC_ACTIVEXREPORTVIEWER1        1039
+#define IDC_MFCMENUBUTTON1              1040
+#define IDC_QUERYVIEWER1                1041
+#define IDC_OCX1                        1042
+#define IDC_ACTIVEXREPORTVIEWER2        1043
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_FrMod_InCnd                  32773
@@ -110,7 +115,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        336
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
