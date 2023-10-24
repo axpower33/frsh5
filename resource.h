@@ -103,6 +103,9 @@
 #define IDC_QUERYVIEWER1                1041
 #define IDC_OCX1                        1042
 #define IDC_ACTIVEXREPORTVIEWER2        1043
+#define IDC_LIST2                       1044
+#define IDC_LIST3                       1045
+#define IDC_LIST1                       1046
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_FrMod_InCnd                  32773
@@ -115,7 +118,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        336
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1044
+#define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

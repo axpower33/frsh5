@@ -1,5 +1,4 @@
-﻿
-// fRSH5.cpp: определяет поведение классов для приложения.
+﻿// fRSH5.cpp: определяет поведение классов для приложения.
 //
 
 #include "pch.h"
@@ -15,6 +14,7 @@
 #include "fRSH5Doc.h"
 #include "fRSH5View.h"
 #include "fRSH5.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -26,6 +26,7 @@
 #using <CrystalDecisions.Windows.Forms.dll>
 #using <System.Data.dll>
 #using <System.Xml.dll>
+#using <Microsoft.ReportViewer.WinForms.dll>
 
 using namespace System::Data::SqlClient;
 using namespace System;
@@ -35,10 +36,12 @@ using namespace System::Windows::Forms;
 using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
+using namespace Microsoft::Reporting::WinForms;
 
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 CDisplay_CrystalrptDlg CrystalrptDlg;
+
 
 // CfRSH5App
 
@@ -56,9 +59,30 @@ ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+BOOL CDisplay_CrystalrptDlg::RegisterWindowClass()
+{
+	WNDCLASS wndcls;
+	HINSTANCE hInst = AfxGetInstanceHandle();
+	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER1_CLASSNAME, &wndcls)))
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.cbClsExtra = 0;
+	wndcls.hInstance = hInst;
+	wndcls.hIcon = NULL;
+	wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
+	(HBRUSH)(COLOR_3DFACE + 1);
+	wndcls.lpszMenuName = NULL;
+	wndcls.lpszClassName = CACTIVEXREPORTVIEWER1_CLASSNAME;
+	if (!AfxRegisterClass(&wndcls)) 
+	{
+		AfxThrowResourceException();
+		return FALSE;
+	}
+	return TRUE;
+}
 CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG4)
 {
-	CDialogEx::CDialogEx();
+	RegisterWindowClass();
 	////{{AFX_DATA_INIT(CDisplay_CrystalrptDlg)
 	////}}AFX_DATA_INIT
 	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
@@ -69,10 +93,16 @@ CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG
 void CDisplay_CrystalrptDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCR_View1);
+	DDX_Control(pDX, IDC_LIST1, pList);
+	DDX_Control(pDX, IDC_LIST2, pList2);
+	DDX_Control(pDX, IDC_LIST3, pList3);
+	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
 }
 
-
+void CDisplay_CrystalrptDlg::PreSubclassWindow()
+{
+	CWnd::PreSubclassWindow();
+}
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg message handlers
 
@@ -97,7 +127,7 @@ void CDisplay_CrystalrptDlg::OnPaint()
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
 		// Draw the icon
-		dc.DrawIcon(x, y, m_hIcon);
+		//dc.DrawIcon(x, y, cxIcon);
 	}
 	else
 	{
@@ -109,16 +139,43 @@ void CDisplay_CrystalrptDlg::OnPaint()
 //  the minimized window.
 HCURSOR CDisplay_CrystalrptDlg::OnQueryDragIcon()
 {
-	return (HCURSOR)m_hIcon;
+	return (HCURSOR)SM_CXICON;
 }
 
 
 BOOL CDisplay_CrystalrptDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
-
+	CDialog::OnInitDialog();
 	
-	return TRUE;
+	//Open the database
+	   String ^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
+	   SqlConnection^ cn = gcnew SqlConnection(pStr);
+	   cn->Open();
+	   String^ SqlString = "SELECT X,Y,Z FROM FRSP";
+	   
+	   SqlCommand^ c3 = gcnew SqlCommand(SqlString, cn);
+	   SqlDataReader^ r3 = c3->ExecuteReader();
+	   while (r3->Read())
+	   {
+		   pList.AddString((CString)r3->GetValue(0)->ToString());
+		   pList2.AddString((CString)r3->GetValue(1)->ToString());
+		   pList3.AddString((CString)r3->GetValue(2)->ToString());
+	   }
+	   r3->Close();
+
+	   CRect rect;
+	   GetClientRect(&rect);
+
+	   
+	   //CACTIVEXREPORTVIEWER1* mCRView1 = (CACTIVEXREPORTVIEWER1*)(GetDlgItem(IDC_ACTIVEXREPORTVIEWER1));
+	   mCRView1->put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	
+	   return TRUE;
+}
+BOOL CDisplay_CrystalrptDlg::Create(CWnd* pParentWnd, const RECT& rect,UINT nID,  DWORD dwStyle /*=WS_VISIBLE*/) 
+{
+	return CWnd::Create(CACTIVEXREPORTVIEWER1_CLASSNAME, _T(""), dwStyle, rect, pParentWnd, nID);
+
 }
 
 void CDisplay_CrystalrptDlg::OnCrystalDlg()
@@ -290,8 +347,9 @@ BOOL CfRSH5App::InitInstance()
 	// в вашем приложении.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
-
+	CDisplay_CrystalrptDlg CrystalrptDlg;
 	CWinAppEx::InitInstance();
+	
 
 
 	// Инициализация библиотек OLE
@@ -369,7 +427,7 @@ BOOL CfRSH5App::InitInstance()
 	// Главное окно было инициализировано, поэтому отобразите и обновите его
 	pMainFrame->ShowWindow(m_nCmdShow);
 	pMainFrame->UpdateWindow();
-
+	
 	return TRUE;
 }
 
@@ -494,30 +552,32 @@ void CDisplay_CrystalrptDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	try {
 		//HRESULT hr = S_OK;
 		//hr = CoCreateInstance(CLSID_Application, NULL, CLSCTX_INPROC_SERVER, IID_IDispatch, (void**)&theApp);
+	
 		
-		 //Open the database
-		String ^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
-		SqlConnection^ cn = gcnew SqlConnection(pStr);
-		cn->Open();
-		String^ SqlString = "SELECT X,Y,Z FROM FRSP";
-		DataSet^ ds = gcnew DataSet();
-		SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString,cn);
-			 
-		da->Fill(ds);
-		DataTable^ dt = ds->Tables[0];
-		// Define ADODB object pointers.  
-	    // Close the database
-		cn->Close();
+		//ReportDataSource^ reportDataSource1 = gcnew ReportDataSource();
+		//BindingSource^ dataTable1BindingSource = gcnew BindingSource();
+		//ReportViewer^ Rep1 = gcnew ReportViewer();
+		//dataTable1BindingSource->DataSource = dt;
+		//reportDataSource1->Name = "fgv";
+		//reportDataSource1->Value = dataTable1BindingSource;
+		//Rep1->Name = "bnm";
+		//Rep1->LocalReport->DataSources->Add(reportDataSource1);
+		//Rep1->LocalReport->ReportEmbeddedResource = "C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\Report1.rdlc";
+		//Rep1->RefreshReport();
 
-		ReportDocument^ pRep = gcnew ReportDocument();
-		CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
-		
-		pRep->Load("Report2.rpt");
-		pRep->SetDataSource(dt);
-	//	mCR_View1.put_ReportSource(pRep);
-		//mCR_View1.ViewReport();
-		pReportViewer1->ReportSource = pRep;
-		pReportViewer1->Refresh();
+
+		//ReportDocument^ pRep = gcnew ReportDocument();
+		//CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
+		//
+		//pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+		//pRep->SetDataSource(dt);
+		////pRep->SetParameterValue("pRep1", "Acula");
+		////pRep->SetParameterValue("pRep2", "Delfin");
+		////mCRView1.put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+		////mCRView1.ViewReport();
+		//pReportViewer1->ReuseParameterValuesOnRefresh = true;
+		//pReportViewer1->ReportSource = pRep;
+		//pReportViewer1->Refresh();
 	}
 	catch (const _com_error& e) {
 		_bstr_t bstrSource(e.Source());
@@ -526,5 +586,5 @@ void CDisplay_CrystalrptDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 		strError = L"Привет222";
 		AfxMessageBox(strError);
 	}
- // TODO: добавьте свой код обработчика сообщений
+  
 }

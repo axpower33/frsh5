@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SqlServerTypes">
+      <UniqueIdentifier>{cc7d872c-a1a1-4c32-b1a3-6653ed3ca17e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fRSH5.h">
@@ -214,6 +217,14 @@
     <None Include="CrystalDecisions.ReportAppServer.XmlSerialize.dll" />
     <None Include="CrystalDecisions.ReportSource.dll" />
     <None Include="CrystalDecisions.Shared.dll" />
+    <None Include="Microsoft.ReportViewer.WinForms.dll" />
+    <None Include="SqlServerTypes\readme.htm">
+      <Filter>SqlServerTypes</Filter>
+    </None>
+    <None Include="SqlServerTypes\Loader.cs">
+      <Filter>SqlServerTypes</Filter>
+    </None>
+    <None Include="ReportViewerWebForm.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Report2.rpt" />

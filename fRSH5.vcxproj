@@ -276,7 +276,13 @@
     <None Include="CrystalDecisions.ReportSource.dll" />
     <None Include="CrystalDecisions.Shared.dll" />
     <None Include="CrystalDecisions.Windows.Forms.dll" />
+    <None Include="Microsoft.ReportViewer.WinForms.dll" />
     <None Include="packages.config" />
+    <None Include="ReportViewerWebForm.aspx" />
+    <None Include="SqlServerTypes\Loader.cs" />
+    <None Include="SqlServerTypes\readme.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <Xml Include="Report2.rpt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>

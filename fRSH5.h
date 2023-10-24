@@ -11,7 +11,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #include "Resource.h"
-
 #include "CACTIVEXREPORTVIEWER1.h"
 #using <mscorlib.dll>
 #using <System.dll>
@@ -29,6 +28,8 @@ using namespace System::Windows::Forms;
 using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
+#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CACTIVEXREPORTVIEWER1")
+
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
 
@@ -38,6 +39,7 @@ class CDisplay_CrystalrptDlg : public CDialogEx
 public:
 	DECLARE_DYNAMIC(CDisplay_CrystalrptDlg)
 	CDisplay_CrystalrptDlg() noexcept;
+	BOOL Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/);
 	// standard constructor
 
 // Dialog Data
@@ -49,14 +51,16 @@ public:
 	BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	BOOL RegisterWindowClass();
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDisplay_CrystalrptDlg)
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-	//}}AFX_VIRTUAL
+	virtual void PreSubclassWindow();
+														//}}AFX_VIRTUAL
 // Implementation
 protected:
-	HICON m_hIcon;
+//	HICON m_hIcon;
 	
 	// Generated message map functions
 	//{{AFX_MSG(CDisplay_CrystalrptDlg)
@@ -64,8 +68,18 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	//CrystalReportViewer1 ReportViewer1;
-	CACTIVEXREPORTVIEWER1 mCR_View1;
+//	CListBox pList;
+//	CListBox pList2;
+//	CListBox pList3;
+//	CACTIVEXREPORTVIEWER1* mCRView1;
+//	CACTIVEXREPORTVIEWER1* mCRView1;
+//	CACTIVEXREPORTVIEWER1 mCRView1;
+//	CACTIVEXREPORTVIEWER1 mCRView1;
+	CListBox pList;
+	CListBox pList2;
+	CListBox pList3;
+//	CACTIVEXREPORTVIEWER1 mCRView1;
+	CACTIVEXREPORTVIEWER1 mCRView1;
 };
 
 class CFrModInCndDlg :public CDialogEx

@@ -8,22 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "afxwin.h"
-#using <mscorlib.dll>
-#using <System.dll>
-#using <System.Windows.Forms.dll>
-#using <CrystalDecisions.CrystalReports.Engine.dll>
-#using <CrystalDecisions.Windows.Forms.dll>
-#using <System.Data.dll>
-#using <System.Xml.dll>
-
-using namespace System::Data::SqlClient;
-using namespace System;
-using namespace System::Data;
-using namespace System::Windows;
-using namespace System::Windows::Forms;
-using namespace CrystalDecisions::CrystalReports::Engine;
-using namespace System::Data::SqlTypes;
-using namespace CrystalDecisions::Windows::Forms;
 
 class CACTIVEXREPORTVIEWER1 : public CWnd
 {
@@ -33,7 +17,7 @@ public:
 	CLSID const& GetClsid()
 	{
 		static CLSID const clsid
-			= {0x645fe3fb, 0x6922, 0x4ef3, {0x9e, 0x21, 0x5a, 0x11, 0x76, 0xca, 0x12, 0xba}};
+			= {0xc0a870c3, 0x66bb, 0x4106, {0x9a, 0x25, 0x60, 0xa2, 0x6f, 0x3c, 0x1d, 0xa8}};
 		return clsid;
 	}
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle,
@@ -154,7 +138,7 @@ public:
 		return result;
 	}
 
-	void put_ReportSource(ReportDocument^ newValue)
+	void put_ReportSource(LPUNKNOWN newValue)
 	{
 		static BYTE parms[] = VTS_UNKNOWN;
 		InvokeHelper(0xFA, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
