@@ -41,9 +41,136 @@ using namespace Microsoft::Reporting::WinForms;
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 CDisplay_CrystalrptDlg CrystalrptDlg;
+CReportDlg pRepDlg1;
 
 
 // CfRSH5App
+/////////////////////////////////////////////////////////////////////////////
+// CDisplay_CrystalrptDlg dialog
+IMPLEMENT_DYNAMIC(CReportDlg, CDialogEx);
+
+BEGIN_MESSAGE_MAP(CReportDlg, CDialogEx)
+	//{{AFX_MSG_MAP(CReportDlg)
+
+	ON_WM_PAINT()
+	ON_WM_QUERYDRAGICON()
+	//ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+BOOL CReportDlg::RegisterWindowClass()
+{
+	WNDCLASS wndcls;
+	//AfxMessageBox(_T("Свойства3...."));
+	HINSTANCE hInst= GetModuleHandle(NULL);
+	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER1_CLASSNAME, &wndcls)))
+	{
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.lpfnWndProc = ::DefWindowProc;
+		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+		wndcls.hInstance = hInst;
+		wndcls.hIcon = NULL;
+		wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
+		wndcls.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+		wndcls.lpszMenuName = NULL;
+		wndcls.lpszClassName = CACTIVEXREPORTVIEWER1_CLASSNAME;
+
+		if (!AfxRegisterClass(&wndcls))
+		{
+			AfxThrowResourceException();
+			return FALSE;
+		}
+	}
+	
+	return TRUE;
+}
+
+CReportDlg::CReportDlg() noexcept : CDialogEx(IDD_DIALOG3)
+{
+	RegisterWindowClass();
+	////{{AFX_DATA_INIT(CReportDlg)
+	////}}AFX_DATA_INIT
+	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+
+void CReportDlg::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+	
+	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+}
+
+void CReportDlg::PreSubclassWindow()
+{
+	CWnd::PreSubclassWindow();
+}
+/////////////////////////////////////////////////////////////////////////////
+// CReportDlg message handlers
+
+// If you add a minimize button to your dialog, you will need the code below
+//  to draw the icon.  For MFC applications using the document/view model,
+//  this is automatically done for you by the framework.
+
+void CReportDlg::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		//dc.DrawIcon(x, y, cxIcon);
+	}
+	else
+	{
+		CDialog::OnPaint();
+	}
+}
+
+// The system calls this to obtain the cursor to display while the user drags
+//  the minimized window.
+HCURSOR CReportDlg::OnQueryDragIcon()
+{
+	return (HCURSOR)SM_CXICON;
+}
+
+
+BOOL CReportDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	CRect rect;
+	GetClientRect(&rect);
+	//Open the database
+    //mCRView1 = (CACTIVEXREPORTVIEWER1*)(GetDlgItem(IDC_ACTIVEXREPORTVIEWER1));
+	
+	
+	//mCRView1.Create(CACTIVEXREPORTVIEWER1_CLASSNAME, _T(""), WS_BORDER, rect, NULL, IDC_ACTIVEXREPORTVIEWER1, nullptr);
+	//mCRView1.put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\Report2.rpt");
+	//mCRView1.put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\Source\\Repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	//mCRView1.ViewReport();
+	return TRUE;
+}
+BOOL CReportDlg::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
+{
+	return CWnd::Create(CACTIVEXREPORTVIEWER1_CLASSNAME, _T(""), dwStyle, rect, pParentWnd, nID);
+
+}
+
+void CReportDlg::OnCrystalDlg1()
+{
+	pRepDlg1.DoModal();
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
@@ -61,7 +188,7 @@ END_MESSAGE_MAP()
 
 BOOL CDisplay_CrystalrptDlg::RegisterWindowClass()
 {
-	WNDCLASS wndcls;
+	/*WNDCLASS wndcls;
 	HINSTANCE hInst = AfxGetInstanceHandle();
 	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER1_CLASSNAME, &wndcls)))
 		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
@@ -76,8 +203,8 @@ BOOL CDisplay_CrystalrptDlg::RegisterWindowClass()
 	if (!AfxRegisterClass(&wndcls)) 
 	{
 		AfxThrowResourceException();
-		return FALSE;
-	}
+		return FALSE;*/
+	//}
 	return TRUE;
 }
 CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG4)
@@ -96,7 +223,7 @@ void CDisplay_CrystalrptDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, pList);
 	DDX_Control(pDX, IDC_LIST2, pList2);
 	DDX_Control(pDX, IDC_LIST3, pList3);
-	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+	//DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
 }
 
 void CDisplay_CrystalrptDlg::PreSubclassWindow()
@@ -168,7 +295,7 @@ BOOL CDisplay_CrystalrptDlg::OnInitDialog()
 
 	   
 	   //CACTIVEXREPORTVIEWER1* mCRView1 = (CACTIVEXREPORTVIEWER1*)(GetDlgItem(IDC_ACTIVEXREPORTVIEWER1));
-	   mCRView1->put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	   //mCRView1->put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
 	
 	   return TRUE;
 }
@@ -297,6 +424,7 @@ BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
 	// Стандартные команды по работе с файлами документов
 	ON_COMMAND(ID_FrMod_InCnd, &CFrModInCndDlg::OnFrMod_InCnd)
 	ON_COMMAND(IDD_DIALOG4, &CDisplay_CrystalrptDlg::OnCrystalDlg)
+	ON_COMMAND(IDD_DIALOG3, &CReportDlg::OnCrystalDlg1)
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 	// Стандартная команда настройки печати

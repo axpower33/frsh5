@@ -29,6 +29,43 @@ using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
 #define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CACTIVEXREPORTVIEWER1")
+//#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CReportDlg")
+class CReportDlg : public CDialogEx
+{
+	// Construction
+public:
+	DECLARE_DYNAMIC(CReportDlg);
+	CReportDlg() noexcept;
+	BOOL Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/);
+	// standard constructor
+
+// Dialog Data
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_DIALOG3 };
+#endif
+	void OnCrystalDlg1();
+	//afx_msg void OnDisplay1();
+	BOOL OnInitDialog();
+	afx_msg void OnPaint();
+	afx_msg HCURSOR OnQueryDragIcon();
+	BOOL RegisterWindowClass();
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CReportDlg)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void PreSubclassWindow();
+	//}}AFX_VIRTUAL
+// Implementation
+protected:
+	//	HICON m_hIcon;
+
+		// Generated message map functions
+		//{{AFX_MSG(CReportDlg)
+		//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+public:
+	CACTIVEXREPORTVIEWER1  mCRView1;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
@@ -37,15 +74,16 @@ class CDisplay_CrystalrptDlg : public CDialogEx
 {
 	// Construction
 public:
-	DECLARE_DYNAMIC(CDisplay_CrystalrptDlg)
+	DECLARE_DYNAMIC(CDisplay_CrystalrptDlg);
 	CDisplay_CrystalrptDlg() noexcept;
 	BOOL Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/);
 	// standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CDisplay_CrystalrptDlg)
+	
+#ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG4 };
-	//}}AFX_DATA
+#endif
 	void OnCrystalDlg();
 	//afx_msg void OnDisplay1();
 	BOOL OnInitDialog();
@@ -68,18 +106,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-//	CListBox pList;
-//	CListBox pList2;
-//	CListBox pList3;
-//	CACTIVEXREPORTVIEWER1* mCRView1;
-//	CACTIVEXREPORTVIEWER1* mCRView1;
-//	CACTIVEXREPORTVIEWER1 mCRView1;
-//	CACTIVEXREPORTVIEWER1 mCRView1;
 	CListBox pList;
 	CListBox pList2;
 	CListBox pList3;
-//	CACTIVEXREPORTVIEWER1 mCRView1;
-	CACTIVEXREPORTVIEWER1 mCRView1;
 };
 
 class CFrModInCndDlg :public CDialogEx
@@ -136,6 +165,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
+extern CReportDlg pRepDlg1;
 extern CDisplay_CrystalrptDlg CrystalrptDlg;
 extern CfRSH5App theApp;
 extern CFrModInCndDlg FrModInCndDlg;
