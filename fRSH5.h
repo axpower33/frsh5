@@ -12,6 +12,7 @@
 #endif // _MSC_VER > 1000
 #include "Resource.h"
 #include "CACTIVEXREPORTVIEWER1.h"
+#include "COCX1.h"
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Windows.Forms.dll>
@@ -28,7 +29,7 @@ using namespace System::Windows::Forms;
 using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
-#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CACTIVEXREPORTVIEWER1")
+#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("COCX1")
 //#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CReportDlg")
 class CReportDlg : public CDialogEx
 {
@@ -64,7 +65,8 @@ protected:
 		//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
-	CACTIVEXREPORTVIEWER1  mCRView1;
+//	CACTIVEXREPORTVIEWER1  mCRView1;
+	COCX1 pRepDlg2;
 };
 
 /////////////////////////////////////////////////////////////////////////////

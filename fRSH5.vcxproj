@@ -193,6 +193,7 @@
     <ClInclude Include="CACTIVEXREPORTVIEWER1.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="ClassView.h" />
+    <ClInclude Include="COCX1.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="fRSH5.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="CACTIVEXREPORTVIEWER1.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="ClassView.cpp" />
+    <ClCompile Include="COCX1.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="fRSH5.cpp" />
     <ClCompile Include="fRSH5Doc.cpp" />

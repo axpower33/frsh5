@@ -27,7 +27,7 @@
 #using <System.Data.dll>
 #using <System.Xml.dll>
 #using <Microsoft.ReportViewer.WinForms.dll>
-
+CComPtr<IWMPPlayer> m_pWMPPlayer;
 using namespace System::Data::SqlClient;
 using namespace System;
 using namespace System::Data;
@@ -98,8 +98,9 @@ CReportDlg::CReportDlg() noexcept : CDialogEx(IDD_DIALOG3)
 void CReportDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	
-	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+
+	//DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+	DDX_Control(pDX, IDC_OCX1, pRepDlg2);
 }
 
 void CReportDlg::PreSubclassWindow()
@@ -149,16 +150,15 @@ HCURSOR CReportDlg::OnQueryDragIcon()
 BOOL CReportDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	CRect rect;
-	GetClientRect(&rect);
-	//Open the database
-    //mCRView1 = (CACTIVEXREPORTVIEWER1*)(GetDlgItem(IDC_ACTIVEXREPORTVIEWER1));
 	
+	LPUNKNOWN pUnknown = pRepDlg2.GetControlUnknown();
+	HRESULT hr = pUnknown->QueryInterface(__uuidof(IWMPPlayer), (void**)&m_pWMPPlayer);
+	if (SUCCEEDED(hr))
+	{
+		CComBSTR strMovie = _T("C:\\Video\\Clips Selena Gomez\\Selena Gomez - Back To You - 1080HD - [ VKlipe.com ].mp4");
 	
-	//mCRView1.Create(CACTIVEXREPORTVIEWER1_CLASSNAME, _T(""), WS_BORDER, rect, NULL, IDC_ACTIVEXREPORTVIEWER1, nullptr);
-	//mCRView1.put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\Report2.rpt");
-	//mCRView1.put_ReportSource((LPUNKNOWN)"C:\\Users\\axpower\\Source\\Repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
-	//mCRView1.ViewReport();
+		pRepDlg2.put_URL(strMovie);
+	}
 	return TRUE;
 }
 BOOL CReportDlg::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
