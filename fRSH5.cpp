@@ -42,11 +42,149 @@ CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 CDisplay_CrystalrptDlg CrystalrptDlg;
 CReportDlg pRepDlg1;
-
+CReportDlg2 pRepDlg2;
 
 // CfRSH5App
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
+
+IMPLEMENT_DYNAMIC(CReportDlg2, CDialogEx);
+
+BEGIN_MESSAGE_MAP(CReportDlg2, CDialogEx)
+	//{{AFX_MSG_MAP(CReportDlg2)
+
+	ON_WM_PAINT()
+	ON_WM_QUERYDRAGICON()
+	//ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+BOOL CReportDlg2::RegisterWindowClass()
+{
+	WNDCLASS wndcls;
+	//AfxMessageBox(_T("Свойства3...."));
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER2_CLASSNAME, &wndcls)))
+	{
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.lpfnWndProc = ::DefWindowProc;
+		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+		wndcls.hInstance = hInst;
+		wndcls.hIcon = NULL;
+		wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
+		wndcls.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+		wndcls.lpszMenuName = NULL;
+		wndcls.lpszClassName = CACTIVEXREPORTVIEWER2_CLASSNAME;
+
+		if (!AfxRegisterClass(&wndcls))
+		{
+			AfxThrowResourceException();
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+CReportDlg2::CReportDlg2() noexcept : CDialogEx(IDD_DIALOG2)
+{
+	RegisterWindowClass();
+	////{{AFX_DATA_INIT(CReportDlg2)
+	////}}AFX_DATA_INIT
+	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+
+void CReportDlg2::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+
+	//DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+
+	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
+}
+
+void CReportDlg2::PreSubclassWindow()
+{
+	CWnd::PreSubclassWindow();
+}
+/////////////////////////////////////////////////////////////////////////////
+// CReportDlg2 message handlers
+
+// If you add a minimize button to your dialog, you will need the code below
+//  to draw the icon.  For MFC applications using the document/view model,
+//  this is automatically done for you by the framework.
+
+void CReportDlg2::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		//dc.DrawIcon(x, y, cxIcon);
+	}
+	else
+	{
+		CDialog::OnPaint();
+	}
+}
+
+// The system calls this to obtain the cursor to display while the user drags
+//  the minimized window.
+HCURSOR CReportDlg2::OnQueryDragIcon()
+{
+	return (HCURSOR)SM_CXICON;
+}
+
+
+BOOL CReportDlg2::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
+	SqlConnection^ cn = gcnew SqlConnection(pStr);
+	cn->Open();
+	String^ SqlString1= "SELECT X,Y,Z FROM FRSP";
+	DataSet^ ds = gcnew DataSet();
+	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1,cn);
+	DataTable^ dt = gcnew DataTable();
+	
+	da->Fill(ds);
+	dt = ds->Tables[0];
+
+	ReportDocument^ pRep = gcnew ReportDocument();
+	CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
+	pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	pRep->SetDataSource(dt);
+
+	//mCRView1.put_ReportSource(pRep);
+	//mCRView1.ViewReport();
+
+	
+	return TRUE;
+}
+BOOL CReportDlg2::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
+{
+	return CWnd::Create(CACTIVEXREPORTVIEWER2_CLASSNAME, _T(""), dwStyle, rect, pParentWnd, nID);
+
+}
+
+void CReportDlg2::OnCrystalDlg2()
+{
+	pRepDlg2.DoModal();
+}
+
 IMPLEMENT_DYNAMIC(CReportDlg, CDialogEx);
 
 BEGIN_MESSAGE_MAP(CReportDlg, CDialogEx)
@@ -151,14 +289,14 @@ BOOL CReportDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	LPUNKNOWN pUnknown = pRepDlg2.GetControlUnknown();
-	HRESULT hr = pUnknown->QueryInterface(__uuidof(IWMPPlayer), (void**)&m_pWMPPlayer);
-	if (SUCCEEDED(hr))
-	{
+	//LPUNKNOWN pUnknown = pRepDlg2.GetControlUnknown();
+	//HRESULT hr = pUnknown->QueryInterface(__uuidof(IWMPPlayer), (void**)&m_pWMPPlayer);
+	//if (SUCCEEDED(hr))
+	//{
 		CComBSTR strMovie = _T("C:\\Video\\Clips Selena Gomez\\Selena Gomez - Back To You - 1080HD - [ VKlipe.com ].mp4");
 	
 		pRepDlg2.put_URL(strMovie);
-	}
+	//}
 	return TRUE;
 }
 BOOL CReportDlg::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
@@ -425,6 +563,7 @@ BEGIN_MESSAGE_MAP(CfRSH5App, CWinAppEx)
 	ON_COMMAND(ID_FrMod_InCnd, &CFrModInCndDlg::OnFrMod_InCnd)
 	ON_COMMAND(IDD_DIALOG4, &CDisplay_CrystalrptDlg::OnCrystalDlg)
 	ON_COMMAND(IDD_DIALOG3, &CReportDlg::OnCrystalDlg1)
+	ON_COMMAND(IDD_DIALOG2, &CReportDlg2::OnCrystalDlg2)
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 	// Стандартная команда настройки печати

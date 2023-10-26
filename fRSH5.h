@@ -30,7 +30,49 @@ using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
 #define CACTIVEXREPORTVIEWER1_CLASSNAME _T("COCX1")
+#define CACTIVEXREPORTVIEWER2_CLASSNAME _T("CACTIVEXREPORTVIEWER1")
+
 //#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CReportDlg")
+
+class CReportDlg2 : public CDialogEx
+{
+	// Construction
+public:
+	DECLARE_DYNAMIC(CReportDlg2);
+	CReportDlg2() noexcept;
+	BOOL Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/);
+	// standard constructor
+
+// Dialog Data
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_DIALOG2 };
+#endif
+	void OnCrystalDlg2();
+	//afx_msg void OnDisplay1();
+	BOOL OnInitDialog();
+	afx_msg void OnPaint();
+	afx_msg HCURSOR OnQueryDragIcon();
+	BOOL RegisterWindowClass();
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CReportDlg2)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void PreSubclassWindow();
+	//}}AFX_VIRTUAL
+// Implementation
+protected:
+	//	HICON m_hIcon;
+
+		// Generated message map functions
+		//{{AFX_MSG(CReportDlg2)
+		//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+public:
+	//	CACTIVEXREPORTVIEWER1  mCRView1;
+	
+	CACTIVEXREPORTVIEWER1 mCRView1;
+};
+
 class CReportDlg : public CDialogEx
 {
 	// Construction
@@ -167,6 +209,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
+extern CReportDlg2 pRepDlg2;
 extern CReportDlg pRepDlg1;
 extern CDisplay_CrystalrptDlg CrystalrptDlg;
 extern CfRSH5App theApp;
