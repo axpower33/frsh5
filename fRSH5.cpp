@@ -18,7 +18,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#using <craxdrt.dll>
+#using <craxddrt20.dll>
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Windows.Forms.dll>
@@ -37,6 +37,7 @@ using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
 using namespace Microsoft::Reporting::WinForms;
+using namespace CRAXDDRT20;
 
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
@@ -162,9 +163,11 @@ BOOL CReportDlg2::OnInitDialog()
 
 	da->Fill(ds);
 	dt = ds->Tables[0]; 
+
 	IReportPtr m_pReport;
 	IApplicationPtr m_pApp;
 
+	m_pApp.CreateInstance(_T("CrystalRuntime.Application.11.0"), NULL, CLSCTX_INPROC_SERVER);
 	CString m_sReportPath=L"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt"
 	m_pReport = m_pApp->OpenReport((_bstr_t)m_sReportPath);
 	mCRView1.put_ReportSource(m_pReport);
