@@ -18,7 +18,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#using <craxdrt.dll>
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Windows.Forms.dll>
