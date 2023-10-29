@@ -47,7 +47,7 @@ CReportDlg2 pRepDlg2;
 // CfRSH5App
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
-
+;
 IMPLEMENT_DYNAMIC(CReportDlg2, CDialogEx);
 
 BEGIN_MESSAGE_MAP(CReportDlg2, CDialogEx)
@@ -159,14 +159,21 @@ BOOL CReportDlg2::OnInitDialog()
 	DataSet^ ds = gcnew DataSet();
 	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1,cn);
 	DataTable^ dt = gcnew DataTable();
-	
-	da->Fill(ds);
-	dt = ds->Tables[0];
 
-	ReportDocument^ pRep = gcnew ReportDocument();
-	CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
-	pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
-	pRep->SetDataSource(dt);
+	da->Fill(ds);
+	dt = ds->Tables[0]; 
+	IReportPtr m_pReport;
+	IApplicationPtr m_pApp;
+
+	CString m_sReportPath=L"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt"
+	m_pReport = m_pApp->OpenReport((_bstr_t)m_sReportPath);
+	mCRView1.put_ReportSource(m_pReport);
+	mCRView1.ViewReport();
+
+	//ReportDocument^ pRep = gcnew ReportDocument();
+	//CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
+	//pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	//pRep->SetDataSource(dt);
 
 	//mCRView1.put_ReportSource(pRep);
 	//mCRView1.ViewReport();
