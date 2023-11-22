@@ -18,7 +18,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#using <craxddrt20.dll>
+
+#import <craxddrt.dll> no_namespace
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Windows.Forms.dll>
@@ -27,7 +28,8 @@
 #using <System.Data.dll>
 #using <System.Xml.dll>
 #using <Microsoft.ReportViewer.WinForms.dll>
-CComPtr<IWMPPlayer> m_pWMPPlayer;
+#using <System.IO.dll>
+#import "msado15.dll" rename( "EOF", "adoEOF" )
 using namespace System::Data::SqlClient;
 using namespace System;
 using namespace System::Data;
@@ -37,18 +39,21 @@ using namespace CrystalDecisions::CrystalReports::Engine;
 using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
 using namespace Microsoft::Reporting::WinForms;
-using namespace CRAXDDRT20;
+using namespace System::IO;
+using namespace System::Runtime::InteropServices;
+using namespace System::Collections;
+
 
 CFrModInCndDlg FrModInCndDlg;
 CString strta, strNpat;
 CDisplay_CrystalrptDlg CrystalrptDlg;
-CReportDlg pRepDlg1;
-CReportDlg2 pRepDlg2;
+CReportDlg cRepDlg;
+
 
 // CfRSH5App
 /////////////////////////////////////////////////////////////////////////////
 // CDisplay_CrystalrptDlg dialog
-;
+
 IMPLEMENT_DYNAMIC(CReportDlg2, CDialogEx);
 
 BEGIN_MESSAGE_MAP(CReportDlg2, CDialogEx)
@@ -58,6 +63,8 @@ BEGIN_MESSAGE_MAP(CReportDlg2, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	//ON_BN_CLICKED(IDC_DISPLAY1, OnDisplay1)
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDOK, &CReportDlg2::OnBnClickedOk)
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 BOOL CReportDlg2::RegisterWindowClass()
@@ -89,10 +96,11 @@ BOOL CReportDlg2::RegisterWindowClass()
 
 CReportDlg2::CReportDlg2() noexcept : CDialogEx(IDD_DIALOG2)
 {
+	CDialogEx::CDialogEx();
+	//{{AFX_DATA_INIT(CReportDlg2)
 	RegisterWindowClass();
-	////{{AFX_DATA_INIT(CReportDlg2)
-	////}}AFX_DATA_INIT
-	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+	//}}AFX_DATA_INIT
+	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
@@ -100,9 +108,6 @@ CReportDlg2::CReportDlg2() noexcept : CDialogEx(IDD_DIALOG2)
 void CReportDlg2::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-
-	//DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
-
 	DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
 }
 
@@ -148,35 +153,100 @@ HCURSOR CReportDlg2::OnQueryDragIcon()
 {
 	return (HCURSOR)SM_CXICON;
 }
+void CReportDlg2::OnBnClickedOk()
+{
+	// TODO: добавьте свой код обработчика уведомлений
+	CDialogEx::OnOK();
+}
 
 
 BOOL CReportDlg2::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CDialogEx::OnInitDialog();
+//	String^ pStr1 = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractal.mdb; User Id=axpower; Password=Mars0011";
+	
 	String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
 	SqlConnection^ cn = gcnew SqlConnection(pStr);
 	cn->Open();
-	String^ SqlString1= "SELECT X,Y,Z FROM FRSP";
+	String^ SqlString1 = "SELECT X,Y,Z FROM FRSP GROUP BY X,Y,Z";
 	DataSet^ ds = gcnew DataSet();
 	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1,cn);
 	DataTable^ dt = gcnew DataTable();
-
+	
 	da->Fill(ds);
-	dt = ds->Tables[0]; 
-
-	IReportPtr m_pReport;
+	dt = ds->Tables[0];
+	
 	IApplicationPtr m_pApp;
+	IReportPtr m_pReport;
 
-	m_pApp.CreateInstance(_T("CrystalRuntime.Application.11.0"), NULL, CLSCTX_INPROC_SERVER);
-	CString m_sReportPath=L"C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt"
-	m_pReport = m_pApp->OpenReport((_bstr_t)m_sReportPath);
+	//ADODB::_ConnectionPtr  Conn1 = NULL;
+	//ADODB::_RecordsetPtr   RS1;
+
+	const CLSID CLSID_Application = { 0xb4741fd0, 0x45a6, 0x11d1, {0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91} };
+	const IID IID_IApplication = { 0x0bac5cf2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+	const CLSID CLSID_ReportObjects = { 0xb4741e60, 0x45a6, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+	const IID IID_IReportObjects = { 0x0bac59b2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
+
+	//m_pApp.CreateInstance(_T("CrystalRuntime.Application.11.0"), NULL, CLSCTX_INPROC_SERVER);
+	HRESULT hr = CoCreateInstance(CLSID_Application, NULL, CLSCTX_INPROC_SERVER, IID_IApplication, (void**)&m_pApp);
+	m_pApp->LogOnServer((_bstr_t)"p2ssql.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals.mdf", (_variant_t)"", (_variant_t)"");
+	CString mPath = _T("C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\CrystalReport5.rpt");
+	//CString mPath = _T("C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Reports\\Feature Examples\\Summary With Formula.rpt");
+	hr = CoCreateInstance(CLSID_ReportObjects, NULL, CLSCTX_INPROC_SERVER, IID_IReportObjects, (void**)&m_pReport);
+
+	m_pReport = m_pApp->OpenReport((_bstr_t)mPath);
+	m_pReport->Database->SetDataSource(&dt);
 	mCRView1.put_ReportSource(m_pReport);
 	mCRView1.ViewReport();
 
-	//ReportDocument^ pRep = gcnew ReportDocument();
-	//CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
-	//pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
-	//pRep->SetDataSource(dt);
+	//HRESULT hr = Conn1.CreateInstance(__uuidof(ADODB::Connection));
+	//ASSERT(SUCCEEDED(hr));
+	//_bstr_t bstrAccessConnect((_bstr_t)"DRIVER={Microsoft Access Driver (*.mdb)}; " +
+	//	L"DBQ=C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Code\\Cpp\\Pro Athlete Salaries\\PlayerSalaries.mdb"  +
+	//	L"DefaultDir=; " +
+	//	L"UID=admin;PWD=; " +
+	//	L"Mode=Read; ");
+
+	//Conn1->ConnectionString = bstrAccessConnect;
+
+
+	//// An empty string used as a dummy value
+	//_bstr_t bstrEmpty(L"");
+
+	//Conn1->Open(bstrAccessConnect, L"axpower", _bstr_t(L""), ADODB::adConnectUnspecified);
+
+	//// Open Recordset Object
+	//RS1.CreateInstance(__uuidof(ADODB::Recordset));
+
+	//CString g_SQLString = L"SELECT" +
+	//	" Customer.`Customer ID`," +
+	//	" Orders.`Order Date`," +
+	//	" Orders_Detail.`Product ID`, Orders_Detail.`Unit Price`, Orders_Detail.`Quantity`" +
+	//	" FROM" +
+	//	" (`Customer` Customer INNER JOIN `Orders` Orders ON" +
+	//	" Customer.`Customer ID` = Orders.`Customer ID`)" +
+	//	" INNER JOIN `Orders Detail` Orders_Detail ON" +
+	//	" Orders.`Order ID` = Orders_Detail.`Order ID`";
+
+	//ASSERT(g_SQLString != "");
+	//RS1->Open((_bstr_t)g_SQLString, Conn1.GetInterfacePtr(), ADODB::adOpenDynamic, ADODB::adLockOptimistic, ADODB::adCmdText);
+
+	//IDatabasePtr pDatabase = 0;
+	//IDatabaseTablesPtr pTables = 0;
+	//IDatabaseTablePtr pTable = 0;
+	//m_pReport->get_Database((IDatabase**)&pDatabase);
+	//pDatabase->get_Tables((IDatabaseTables**)&pTables);
+	//pDatabase->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Databases\\xtreme.mdb", (_variant_t)"Admin", (_variant_t)"");
+	//pDatabase->SetDataSource(&RS1);
+
+
+	
+	
+	
+	/*ReportDocument^ pRep = gcnew ReportDocument();
+	CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
+	pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
+	pRep->SetDataSource(dt);*/
 
 	//mCRView1.put_ReportSource(pRep);
 	//mCRView1.ViewReport();
@@ -184,6 +254,14 @@ BOOL CReportDlg2::OnInitDialog()
 	
 	return TRUE;
 }
+
+void CReportDlg2::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CDialogEx::OnShowWindow(bShow, nStatus);
+	
+	// TODO: добавьте свой код обработчика сообщений
+}
+
 BOOL CReportDlg2::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
 {
 	return CWnd::Create(CACTIVEXREPORTVIEWER2_CLASSNAME, _T(""), dwStyle, rect, pParentWnd, nID);
@@ -192,7 +270,8 @@ BOOL CReportDlg2::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwS
 
 void CReportDlg2::OnCrystalDlg2()
 {
-	pRepDlg2.DoModal();
+	CReportDlg2 cRepDlg2;
+	cRepDlg2.DoModal();
 }
 
 IMPLEMENT_DYNAMIC(CReportDlg, CDialogEx);
@@ -247,7 +326,6 @@ void CReportDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 
-	//DDX_Control(pDX, IDC_ACTIVEXREPORTVIEWER1, mCRView1);
 	DDX_Control(pDX, IDC_OCX1, pRepDlg2);
 }
 
@@ -298,15 +376,15 @@ HCURSOR CReportDlg::OnQueryDragIcon()
 BOOL CReportDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
-	//LPUNKNOWN pUnknown = pRepDlg2.GetControlUnknown();
-	//HRESULT hr = pUnknown->QueryInterface(__uuidof(IWMPPlayer), (void**)&m_pWMPPlayer);
-	//if (SUCCEEDED(hr))
-	//{
-		CComBSTR strMovie = _T("C:\\Video\\Clips Selena Gomez\\Selena Gomez - Back To You - 1080HD - [ VKlipe.com ].mp4");
+	CComPtr <IWMPPlayer> m_pWMPPlayer;
+	LPUNKNOWN pUnknown = pRepDlg2.GetControlUnknown();
+	HRESULT hr = pUnknown->QueryInterface(__uuidof(IWMPPlayer), (void**)&m_pWMPPlayer);
+	if (SUCCEEDED(hr))
+	{
+		CComBSTR strMovie = _T("C:\\Video\\1.wpl");
 	
 		pRepDlg2.put_URL(strMovie);
-	//}
+	}
 	return TRUE;
 }
 BOOL CReportDlg::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwStyle /*=WS_VISIBLE*/)
@@ -317,7 +395,7 @@ BOOL CReportDlg::Create(CWnd* pParentWnd, const RECT& rect, UINT nID, DWORD dwSt
 
 void CReportDlg::OnCrystalDlg1()
 {
-	pRepDlg1.DoModal();
+	cRepDlg.DoModal();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -430,11 +508,13 @@ BOOL CDisplay_CrystalrptDlg::OnInitDialog()
 	   
 	   SqlCommand^ c3 = gcnew SqlCommand(SqlString, cn);
 	   SqlDataReader^ r3 = c3->ExecuteReader();
+	   int i = 0;
 	   while (r3->Read())
 	   {
-		   pList.AddString((CString)r3->GetValue(0)->ToString());
-		   pList2.AddString((CString)r3->GetValue(1)->ToString());
-		   pList3.AddString((CString)r3->GetValue(2)->ToString());
+		   pList.InsertString(i,(CString)r3->GetValue(0)->ToString());
+		   pList2.InsertString(i, (CString)r3->GetValue(1)->ToString());
+		   pList3.InsertString(i, (CString)r3->GetValue(2)->ToString());
+		   i++;
 	   }
 	   r3->Close();
 
@@ -817,11 +897,6 @@ BOOL CfRSH5App::OnIdle(LONG lCount)
 	return TRUE;
 }
 
-const CLSID CLSID_Application = { 0xb4741fd0, 0x45a6, 0x11d1, {0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91} };
-const IID IID_IApplication = { 0x0bac5cf2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
-const CLSID CLSID_ReportObjects = { 0xb4741e60, 0x45a6, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
-const IID IID_IReportObjects = { 0x0bac59b2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
-
 void CDisplay_CrystalrptDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 
@@ -865,3 +940,4 @@ void CDisplay_CrystalrptDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	}
   
 }
+

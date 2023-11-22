@@ -20,7 +20,7 @@
 #using <CrystalDecisions.Windows.Forms.dll>
 #using <System.Data.dll>
 #using <System.Xml.dll>
-
+#import <craxddrt.dll> no_namespace
 using namespace System::Data::SqlClient;
 using namespace System;
 using namespace System::Data;
@@ -68,8 +68,12 @@ protected:
 		//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
-	//	CACTIVEXREPORTVIEWER1  mCRView1;
-	
+//	CACTIVEXREPORTVIEWER1 mCRView1;
+	afx_msg void OnBnClickedOk();
+	IApplicationPtr m_pApp;
+	IReportPtr m_pReport;
+
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	CACTIVEXREPORTVIEWER1 mCRView1;
 };
 
@@ -209,8 +213,8 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CReportDlg2 pRepDlg2;
-extern CReportDlg pRepDlg1;
+extern CReportDlg2 cRepDlg2;
+extern CReportDlg cRepDlg;
 extern CDisplay_CrystalrptDlg CrystalrptDlg;
 extern CfRSH5App theApp;
 extern CFrModInCndDlg FrModInCndDlg;

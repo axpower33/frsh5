@@ -8,23 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "afxwin.h"
-#using <mscorlib.dll>
-#using <System.dll>
-#using <System.Windows.Forms.dll>
-#using <CrystalDecisions.CrystalReports.Engine.dll>
-#using <CrystalDecisions.Windows.Forms.dll>
-#using <System.Data.dll>
-#using <System.Xml.dll>
-#using <Microsoft.ReportViewer.WinForms.dll>
-using namespace System::Data::SqlClient;
-using namespace System;
-using namespace System::Data;
-using namespace System::Windows;
-using namespace System::Windows::Forms;
-using namespace CrystalDecisions::CrystalReports::Engine;
-using namespace System::Data::SqlTypes;
-using namespace CrystalDecisions::Windows::Forms;
-using namespace Microsoft::Reporting::WinForms;
 
 class CACTIVEXREPORTVIEWER1 : public CWnd
 {
@@ -155,7 +138,7 @@ public:
 		return result;
 	}
 
-	void put_ReportSource(ReportDocument^ newValue)
+	void put_ReportSource(LPUNKNOWN newValue)
 	{
 		static BYTE parms[] = VTS_UNKNOWN;
 		InvokeHelper(0xFA, DISPATCH_PROPERTYPUT, VT_EMPTY, nullptr, parms, newValue);
