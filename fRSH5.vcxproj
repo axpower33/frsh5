@@ -267,29 +267,6 @@
     <Image Include="res\userimages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Alerting.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Chart.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\CrossTab.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Date Range Formula.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Formatting.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Formulas.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Group By First Letter.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Group By Intervals.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Group.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Hierarchical Grouping.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Hyperlinks.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\OLAP Cube Report.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Percentages.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Record Selection1.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Record Selection2.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Running Totals Group.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Running Totals.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Sort Multiple Field.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Sort.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Subtotal Group.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Subtotal Multiple Level.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Summary Group.rpt" />
-    <None Include="..\..\..\..\..\..\Program Files\Seagate Software\Crystal Reports\Samples\En\Reports\Feature Examples\Summary With Formula.rpt" />
     <None Include="craxddrt.dll" />
     <None Include="CrystalDecisions.CrystalReports.Engine.dll" />
     <None Include="CrystalDecisions.ReportAppServer.ClientDoc.dll" />
@@ -307,8 +284,6 @@
     <None Include="CrystalDecisions.ReportSource.dll" />
     <None Include="CrystalDecisions.Shared.dll" />
     <None Include="CrystalDecisions.Windows.Forms.dll" />
-    <None Include="CrystalReport1.rpt" />
-    <None Include="CrystalReport5.rpt" />
     <None Include="Debug\craxddrt.tlh" />
     <None Include="Debug\craxddrt.tli" />
     <None Include="Debug\craxdrt.tlb" />
@@ -317,17 +292,13 @@
     <None Include="Debug\msado15.dll" />
     <None Include="Microsoft.ReportViewer.WinForms.dll" />
     <None Include="packages.config" />
-    <None Include="Report1.rpt" />
-    <None Include="Report3.rpt" />
+    <None Include="Report77.rpt" />
+    <None Include="Report88.rpt" />
     <None Include="ReportViewerWebForm.aspx" />
     <None Include="SqlServerTypes\Loader.cs" />
     <None Include="SqlServerTypes\readme.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <Xml Include="Report2.rpt">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </Xml>
     <None Include="res\fRSH5.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

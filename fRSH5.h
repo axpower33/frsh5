@@ -31,7 +31,7 @@ using namespace System::Data::SqlTypes;
 using namespace CrystalDecisions::Windows::Forms;
 #define CACTIVEXREPORTVIEWER1_CLASSNAME _T("COCX1")
 #define CACTIVEXREPORTVIEWER2_CLASSNAME _T("CACTIVEXREPORTVIEWER1")
-
+#define CACTIVEXREPORTVIEWER3_CLASSNAME _T("CDisplay_CrystalrptDlg")
 //#define CACTIVEXREPORTVIEWER1_CLASSNAME _T("CReportDlg")
 
 class CReportDlg2 : public CDialogEx

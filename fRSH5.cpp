@@ -164,23 +164,22 @@ BOOL CReportDlg2::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 //	String^ pStr1 = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractal.mdb; User Id=axpower; Password=Mars0011";
-	
-	String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 60";
+	String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS2.MDF""; Integrated Security = True; Connect Timeout = 60";
 	SqlConnection^ cn = gcnew SqlConnection(pStr);
 	cn->Open();
-	String^ SqlString1 = "SELECT X,Y,Z FROM FRSP GROUP BY X,Y,Z";
+	String^ SqlString1 = "SELECT X,Y,Z FROM FRSP";
 	DataSet^ ds = gcnew DataSet();
-	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1,cn);
+	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1, cn);
 	DataTable^ dt = gcnew DataTable();
-	
+
 	da->Fill(ds);
 	dt = ds->Tables[0];
-	
+
 	IApplicationPtr m_pApp;
 	IReportPtr m_pReport;
 
-	//ADODB::_ConnectionPtr  Conn1 = NULL;
-	//ADODB::_RecordsetPtr   RS1;
+	ADODB::_ConnectionPtr  Conn1 = NULL;
+	ADODB::_RecordsetPtr   RS1;
 
 	const CLSID CLSID_Application = { 0xb4741fd0, 0x45a6, 0x11d1, {0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91} };
 	const IID IID_IApplication = { 0x0bac5cf2, 0x44c9, 0x11d1, 0xab, 0xec, 0x00, 0xa0, 0xc9, 0x27, 0x4b, 0x91 };
@@ -189,60 +188,57 @@ BOOL CReportDlg2::OnInitDialog()
 
 	//m_pApp.CreateInstance(_T("CrystalRuntime.Application.11.0"), NULL, CLSCTX_INPROC_SERVER);
 	HRESULT hr = CoCreateInstance(CLSID_Application, NULL, CLSCTX_INPROC_SERVER, IID_IApplication, (void**)&m_pApp);
-	m_pApp->LogOnServer((_bstr_t)"p2ssql.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals.mdf", (_variant_t)"", (_variant_t)"");
-	CString mPath = _T("C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\CrystalReport5.rpt");
+	CString mPath = _T("C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\Report77.rpt");
 	//CString mPath = _T("C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Reports\\Feature Examples\\Summary With Formula.rpt");
 	hr = CoCreateInstance(CLSID_ReportObjects, NULL, CLSCTX_INPROC_SERVER, IID_IReportObjects, (void**)&m_pReport);
-
 	m_pReport = m_pApp->OpenReport((_bstr_t)mPath);
-	m_pReport->Database->SetDataSource(&dt);
+	m_pReport->Database->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf", (_variant_t)"axpower", (_variant_t)"");
+
+	hr = Conn1.CreateInstance(__uuidof(ADODB::Connection));
+	ASSERT(SUCCEEDED(hr));
+	_bstr_t bstrAccessConnect=L"Driver={ODBC Driver 17 for SQL Server};server=(LocalDB)\\MSSQLLocalDB;DATABASE=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf;trusted_connection=Yes;";
+
+	Conn1->ConnectionString = bstrAccessConnect;
+
+	// An empty string used as a dummy value
+	_bstr_t bstrEmpty(L"");
+
+	Conn1->Open(bstrAccessConnect, L"axpower", _bstr_t(L""), -1);
+	//Conn1->Open(bstrEmpty, bstrEmpty, bstrEmpty, -1);
+
+	ADODB::_CommandPtr pCmd = NULL;
+	hr = pCmd.CreateInstance(__uuidof(ADODB::Command));
+	ASSERT(SUCCEEDED(hr));
+	pCmd->ActiveConnection = Conn1;
+	pCmd->CommandText=L"SELECT X,Y,Z FROM FRSP";
+	// Open Recordset Object
+	RS1.CreateInstance(__uuidof(ADODB::Recordset));
+	//CString g_SQLString = L"SELECT X,Y,Z FROM FRSP ORDER BY X,Y,Z";
+	//ASSERT(g_SQLString != "");
+	RS1->Open((_bstr_t)pCmd->CommandText, _variant_t((IDispatch*)Conn1, true), ADODB::adOpenDynamic, ADODB::adLockOptimistic, ADODB::adCmdText);
+
+	IDatabasePtr pDatabase = 0;
+	IDatabaseTablesPtr pTables = 0;
+	IDatabaseTablePtr pTable = 0;
+	m_pReport->get_Database((IDatabase**)&pDatabase);
+	pDatabase->get_Tables((IDatabaseTables**)&pTables);
+	//pDatabase->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf", (_variant_t)"axpower", (_variant_t)"");
+	VARIANT var, var2;
+	VariantInit(&var);
+	VariantInit(&var2);
+	var.vt = VT_DISPATCH;
+	var.pdispVal = (IDispatch*)Conn1;
+	var2.vt = VT_DISPATCH;
+	var2.pdispVal = (IDispatch*)RS1->GetActiveCommand();
+	//var2.vt = VT_DISPATCH;
+	//var2.pdispVal = (IDispatch*)pCmd;
+	
+	hr = pDatabase->AddADOCommand(var, var2);
+	ASSERT(SUCCEEDED(hr));
+
 	mCRView1.put_ReportSource(m_pReport);
 	mCRView1.ViewReport();
-
-	//HRESULT hr = Conn1.CreateInstance(__uuidof(ADODB::Connection));
-	//ASSERT(SUCCEEDED(hr));
-	//_bstr_t bstrAccessConnect((_bstr_t)"DRIVER={Microsoft Access Driver (*.mdb)}; " +
-	//	L"DBQ=C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Code\\Cpp\\Pro Athlete Salaries\\PlayerSalaries.mdb"  +
-	//	L"DefaultDir=; " +
-	//	L"UID=admin;PWD=; " +
-	//	L"Mode=Read; ");
-
-	//Conn1->ConnectionString = bstrAccessConnect;
-
-
-	//// An empty string used as a dummy value
-	//_bstr_t bstrEmpty(L"");
-
-	//Conn1->Open(bstrAccessConnect, L"axpower", _bstr_t(L""), ADODB::adConnectUnspecified);
-
-	//// Open Recordset Object
-	//RS1.CreateInstance(__uuidof(ADODB::Recordset));
-
-	//CString g_SQLString = L"SELECT" +
-	//	" Customer.`Customer ID`," +
-	//	" Orders.`Order Date`," +
-	//	" Orders_Detail.`Product ID`, Orders_Detail.`Unit Price`, Orders_Detail.`Quantity`" +
-	//	" FROM" +
-	//	" (`Customer` Customer INNER JOIN `Orders` Orders ON" +
-	//	" Customer.`Customer ID` = Orders.`Customer ID`)" +
-	//	" INNER JOIN `Orders Detail` Orders_Detail ON" +
-	//	" Orders.`Order ID` = Orders_Detail.`Order ID`";
-
-	//ASSERT(g_SQLString != "");
-	//RS1->Open((_bstr_t)g_SQLString, Conn1.GetInterfacePtr(), ADODB::adOpenDynamic, ADODB::adLockOptimistic, ADODB::adCmdText);
-
-	//IDatabasePtr pDatabase = 0;
-	//IDatabaseTablesPtr pTables = 0;
-	//IDatabaseTablePtr pTable = 0;
-	//m_pReport->get_Database((IDatabase**)&pDatabase);
-	//pDatabase->get_Tables((IDatabaseTables**)&pTables);
-	//pDatabase->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Databases\\xtreme.mdb", (_variant_t)"Admin", (_variant_t)"");
-	//pDatabase->SetDataSource(&RS1);
-
-
-	
-	
-	
+			
 	/*ReportDocument^ pRep = gcnew ReportDocument();
 	CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
 	pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");
@@ -258,7 +254,7 @@ BOOL CReportDlg2::OnInitDialog()
 void CReportDlg2::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialogEx::OnShowWindow(bShow, nStatus);
-	
+
 	// TODO: добавьте свой код обработчика сообщений
 }
 
@@ -314,9 +310,10 @@ BOOL CReportDlg::RegisterWindowClass()
 
 CReportDlg::CReportDlg() noexcept : CDialogEx(IDD_DIALOG3)
 {
+	
+	//{{AFX_DATA_INIT(CReportDlg)
 	RegisterWindowClass();
-	////{{AFX_DATA_INIT(CReportDlg)
-	////}}AFX_DATA_INIT
+	//}}AFX_DATA_INIT
 	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -414,30 +411,35 @@ END_MESSAGE_MAP()
 
 BOOL CDisplay_CrystalrptDlg::RegisterWindowClass()
 {
-	/*WNDCLASS wndcls;
-	HINSTANCE hInst = AfxGetInstanceHandle();
-	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER1_CLASSNAME, &wndcls)))
-		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = 0;
-	wndcls.hInstance = hInst;
-	wndcls.hIcon = NULL;
-	wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
-	(HBRUSH)(COLOR_3DFACE + 1);
-	wndcls.lpszMenuName = NULL;
-	wndcls.lpszClassName = CACTIVEXREPORTVIEWER1_CLASSNAME;
-	if (!AfxRegisterClass(&wndcls)) 
+	WNDCLASS wndcls;
+	//AfxMessageBox(_T("Свойства3...."));
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	if (!(::GetClassInfo(hInst, CACTIVEXREPORTVIEWER3_CLASSNAME, &wndcls)))
 	{
-		AfxThrowResourceException();
-		return FALSE;*/
-	//}
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.lpfnWndProc = ::DefWindowProc;
+		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+		wndcls.hInstance = hInst;
+		wndcls.hIcon = NULL;
+		wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
+		wndcls.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+		wndcls.lpszMenuName = NULL;
+		wndcls.lpszClassName = CACTIVEXREPORTVIEWER3_CLASSNAME;
+
+		if (!AfxRegisterClass(&wndcls))
+		{
+			AfxThrowResourceException();
+			return FALSE;
+		}
+	}
 	return TRUE;
 }
 CDisplay_CrystalrptDlg::CDisplay_CrystalrptDlg() noexcept : CDialogEx(IDD_DIALOG4)
 {
+	
+	//{{AFX_DATA_INIT(CDisplay_CrystalrptDlg)
 	RegisterWindowClass();
-	////{{AFX_DATA_INIT(CDisplay_CrystalrptDlg)
-	////}}AFX_DATA_INIT
+	//}}AFX_DATA_INIT
 	//// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
