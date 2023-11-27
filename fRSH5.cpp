@@ -164,10 +164,11 @@ BOOL CReportDlg2::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 //	String^ pStr1 = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractal.mdb; User Id=axpower; Password=Mars0011";
-	String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS2.MDF""; Integrated Security = True; Connect Timeout = 60";
+	//String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS2.MDF""; Integrated Security = True; Connect Timeout = 60";
+	String^ pStr = "Data Source=AXP_COMP;Initial Catalog=Fractals;Integrated Security=True";
 	SqlConnection^ cn = gcnew SqlConnection(pStr);
 	cn->Open();
-	String^ SqlString1 = "SELECT X,Y,Z FROM FRSP";
+	String^ SqlString1 = "SELECT X,Y,Z FROM FRSP ORDER BY X,Y,Z";
 	DataSet^ ds = gcnew DataSet();
 	SqlDataAdapter^ da = gcnew SqlDataAdapter(SqlString1, cn);
 	DataTable^ dt = gcnew DataTable();
@@ -188,31 +189,34 @@ BOOL CReportDlg2::OnInitDialog()
 
 	//m_pApp.CreateInstance(_T("CrystalRuntime.Application.11.0"), NULL, CLSCTX_INPROC_SERVER);
 	HRESULT hr = CoCreateInstance(CLSID_Application, NULL, CLSCTX_INPROC_SERVER, IID_IApplication, (void**)&m_pApp);
-	CString mPath = _T("C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\Report77.rpt");
+	CString mPath = _T("C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\Report33.rpt");
 	//CString mPath = _T("C:\\Program Files\\Seagate Software\\Crystal Reports\\Samples\\En\\Reports\\Feature Examples\\Summary With Formula.rpt");
 	hr = CoCreateInstance(CLSID_ReportObjects, NULL, CLSCTX_INPROC_SERVER, IID_IReportObjects, (void**)&m_pReport);
+	
 	m_pReport = m_pApp->OpenReport((_bstr_t)mPath);
-	m_pReport->Database->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf", (_variant_t)"axpower", (_variant_t)"");
+	//m_pReport->Database->LogOnServer((_bstr_t)"pdsodbc.dll", (_bstr_t)"", (_variant_t)"C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf", (_variant_t)"axpower", (_variant_t)"");
 
 	hr = Conn1.CreateInstance(__uuidof(ADODB::Connection));
 	ASSERT(SUCCEEDED(hr));
-	_bstr_t bstrAccessConnect=L"Driver={ODBC Driver 17 for SQL Server};server=(LocalDB)\\MSSQLLocalDB;DATABASE=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf;trusted_connection=Yes;";
-
+	//_bstr_t bstrAccessConnect=L"Driver={ODBC Driver 17 for SQL Server};server=(LocalDB)\\MSSQLLocalDB;DATABASE=C:\\Users\\axpower\\Source\\Repos\\fRSH5\\fRSH5\\fractals2.mdf;trusted_connection=Yes;";
+	_bstr_t bstrAccessConnect(L"Provider=SQLOLEDB;Initial Catalog=Fractals;UID=sa;PWD=Mars0011;");
 	Conn1->ConnectionString = bstrAccessConnect;
 
 	// An empty string used as a dummy value
 	_bstr_t bstrEmpty(L"");
 
-	Conn1->Open(bstrAccessConnect, L"axpower", _bstr_t(L""), -1);
+	Conn1->Open(bstrAccessConnect, L"sa", L"Mars0011", -1);
 	//Conn1->Open(bstrEmpty, bstrEmpty, bstrEmpty, -1);
 
 	ADODB::_CommandPtr pCmd = NULL;
 	hr = pCmd.CreateInstance(__uuidof(ADODB::Command));
 	ASSERT(SUCCEEDED(hr));
 	pCmd->ActiveConnection = Conn1;
-	pCmd->CommandText=L"SELECT X,Y,Z FROM FRSP";
+	pCmd->CommandText=L"SELECT X,Y,Z FROM FRSP ORDER BY X,Y,Z";
+	
 	// Open Recordset Object
-	RS1.CreateInstance(__uuidof(ADODB::Recordset));
+	hr=RS1.CreateInstance(__uuidof(ADODB::Recordset));
+	ASSERT(SUCCEEDED(hr));
 	//CString g_SQLString = L"SELECT X,Y,Z FROM FRSP ORDER BY X,Y,Z";
 	//ASSERT(g_SQLString != "");
 	RS1->Open((_bstr_t)pCmd->CommandText, _variant_t((IDispatch*)Conn1, true), ADODB::adOpenDynamic, ADODB::adLockOptimistic, ADODB::adCmdText);
@@ -238,7 +242,7 @@ BOOL CReportDlg2::OnInitDialog()
 
 	mCRView1.put_ReportSource(m_pReport);
 	mCRView1.ViewReport();
-			
+
 	/*ReportDocument^ pRep = gcnew ReportDocument();
 	CrystalReportViewer^ pReportViewer1 = gcnew CrystalReportViewer();
 	pRep->Load("C:\\Users\\axpower\\source\\repos\\WindowsFormsApp8\\WindowsFormsApp8\\CrystalReport1.rpt");

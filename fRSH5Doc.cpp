@@ -124,7 +124,8 @@ void CfRSH5Doc::Serialize(CArchive& ar)
 
         TRY{
            // Open the database
-            String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 30";
+            //String^ pStr = "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = ""C:\\USERS\\AXPOWER\\SOURCE\\REPOS\\FRSH5\\FRSH5\\FRACTALS.MDF""; Integrated Security = True; Connect Timeout = 30";
+            String^ pStr = "Data Source=AXP_COMP;Initial Catalog=Fractals;Integrated Security=True";
             SqlConnection^ cn = gcnew SqlConnection(pStr);
             cn->Open();
             String^ SqlString = "DELETE FROM FRSP";
